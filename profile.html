@@ -4,95 +4,158 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile - Campus Market</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght=300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <style>
-        :root {
-            --bg-primary: #0f172a;
-            --bg-secondary: #1e293b;
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --accent-emerald: #10b981;
-            --border-color: #334155;
-            --card-bg: #1e293b;
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { background-color: var(--bg-primary); color: var(--text-primary); min-height: 100vh; display: flex; flex-direction: column; }
-        header { background-color: var(--bg-secondary); border-bottom: 1px solid var(--border-color); padding: 1rem 5%; display: flex; justify-content: space-between; align-items: center; }
-        header .logo { font-size: 1.4rem; font-weight: 700; color: var(--accent-emerald); display: flex; align-items: center; gap: 10px; text-decoration: none; }
-        nav { display: flex; gap: 20px; }
-        nav a { color: var(--text-secondary); text-decoration: none; font-weight: 500; font-size: 0.95rem; display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 6px; }
-        nav a:hover, nav a.active { color: var(--text-primary); background-color: var(--border-color); }
-        nav a.active { border-bottom: 2px solid var(--accent-emerald); border-radius: 6px 6px 0 0; }
-        .profile-container { padding: 3rem 5%; display: flex; justify-content: center; }
-        .profile-box { background: var(--bg-secondary); border: 1px solid var(--border-color); padding: 2rem; border-radius: 12px; width: 100%; max-width: 600px; text-align: center; }
-        .profile-header { display: flex; flex-direction: column; align-items: center; gap: 15px; margin-bottom: 20px; }
-        .avatar-wrapper { position: relative; width: 100px; height: 100px; }
-        .avatar { width: 100px; height: 100px; background: var(--bg-primary); border: 2px solid var(--border-color); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 2.5rem; color: var(--text-secondary); overflow: hidden; }
-        .avatar img { width: 100%; height: 100%; object-fit: cover; }
-        .avatar-upload-btn { position: absolute; bottom: 0; right: 0; background: var(--accent-emerald); border: none; width: 32px; height: 32px; border-radius: 50%; color: white; display: flex; justify-content: center; align-items: center; cursor: pointer; font-size: 0.9rem; }
-        .profile-header h2 { font-size: 1.4rem; font-weight: 600; }
-        .profile-header p { color: var(--text-secondary); font-size: 0.95rem; }
-        .logout-btn { background: #ff4d4d; color: white; border: none; padding: 10px 24px; border-radius: 6px; font-weight: 600; cursor: pointer; margin-top: 10px; transition: background 0.2s; }
-        .logout-btn:hover { background: #e03e3e; }
-        .products { padding: 0 5% 4rem 5%; flex: 1; }
-        .products h2 { font-size: 1.4rem; margin-bottom: 20px; padding-left: 10px; border-left: 4px solid var(--accent-emerald); }
-        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
-        .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.2s; }
-        .card img { width: 100%; height: 180px; object-fit: cover; }
-        .card h3 { font-size: 1rem; padding: 12px 12px 4px 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .card p { color: var(--accent-emerald); font-weight: 600; padding: 0 12px 12px 12px; }
-        #profileMsg { text-align: center; margin-bottom: 15px; color: var(--accent-emerald); font-weight: 500; }
-        footer { background-color: var(--bg-secondary); border-top: 1px solid var(--border-color); padding: 1.5rem 5%; text-align: center; font-size: 0.9rem; color: var(--text-secondary); }
-        @media (max-width: 600px) { header { flex-direction: column; gap: 15px; padding: 1rem; } nav { width: 100%; justify-content: space-around; } }
-    </style>
 </head>
+
 <body>
 
 <header>
-    <a href="index.html" class="logo"><i class="fa-solid fa-store"></i> Campus Market</a>
+
+    <div class="logo">
+        <i class="fa-solid fa-store"></i>
+        Campus Market
+    </div>
+
     <nav>
-        <a href="index.html"><i class="fa-solid fa-house"></i> Home</a>
-        <a href="marketplace.html"><i class="fa-solid fa-shop"></i> Marketplace</a>
-        <a href="sell.html"><i class="fa-solid fa-plus"></i> Sell</a>
-        <a href="profile.html" class="active"><i class="fa-solid fa-user"></i> Profile</a>
+
+        <a href="index.html">
+            <i class="fa-solid fa-house"></i> Home
+        </a>
+
+        <a href="marketplace.html">
+            <i class="fa-solid fa-shop"></i> Marketplace
+        </a>
+
+        <a href="sell.html">
+            <i class="fa-solid fa-plus"></i> Sell
+        </a>
+
+        <a href="profile.html" class="active">
+            <i class="fa-solid fa-user"></i> Profile
+        </a>
+
     </nav>
+
 </header>
 
 <section class="profile-container">
+
     <div class="profile-box">
-        <p id="profileMsg"></p>
+
         <div class="profile-header">
-            <div class="avatar-wrapper">
-                <div class="avatar">
-                    <i class="fa-solid fa-user" id="defaultAvatarIcon"></i>
-                    <img id="profileDisplayImg" style="display: none;" alt="Avatar">
-                </div>
-                <label for="avatarInput" class="avatar-upload-btn">
-                    <i class="fa-solid fa-camera"></i>
-                </label>
-                <input type="file" id="avatarInput" accept="image/*" style="display: none;">
+
+            <div class="avatar"
+                 onclick="document.getElementById('avatarInput').click()"
+                 style="cursor:pointer;position:relative;overflow:hidden;">
+
+                <i class="fa-solid fa-user" id="defaultAvatarIcon"></i>
+
+                <img
+                    id="profileDisplayImg"
+                    src=""
+                    alt="Profile Picture"
+                    style="display:none;width:100%;height:100%;object-fit:cover;border-radius:50%;"
+                >
+
             </div>
+
+            <input
+                type="file"
+                id="avatarInput"
+                accept="image/*"
+                style="display:none;"
+            >
+
             <div>
-                <h2 id="userEmail">Loading...</h2>
+
+                <h2 id="userEmail">
+                    Loading...
+                </h2>
+
                 <p>University of Zambia</p>
+
             </div>
+
         </div>
-        <button class="logout-btn" onclick="logout()">Logout</button>
+
+        <div class="profile-stats">
+
+            <div>
+                <h3>-</h3>
+                <p>Listings</p>
+            </div>
+
+            <div>
+                <h3>-</h3>
+                <p>Sales</p>
+            </div>
+
+            <div>
+                <h3>-</h3>
+                <p>Rating</p>
+            </div>
+
+        </div>
+
+        <button
+            class="logout-btn"
+            onclick="logout()">
+
+            <i class="fa-solid fa-right-from-bracket"></i>
+            Logout
+
+        </button>
+
     </div>
+
 </section>
 
 <section class="products">
+
     <h2>My Listings</h2>
+
+    <p id="profileMsg"
+       style="text-align:center;margin-bottom:15px;font-weight:500;">
+    </p>
+
     <div class="product-grid" id="myItemsGrid">
-        </div>
+
+        <p style="grid-column:1/-1;text-align:center;color:#888;">
+            Loading your listings...
+        </p>
+
+    </div>
+
 </section>
 
 <footer>
-    <p>© 2026 Campus Market. Engineered by EMMANUEL ELECTRONICS LTD.</p>
+
+    <p>
+        © 2026 Campus Market. All Rights Reserved.
+    </p>
+
+    <p style="font-size:.75rem;color:#6b7280;margin-top:4px;">
+        Engineered &amp; Maintained by
+        <strong style="color:var(--accent-emerald);">
+            EMMANUEL ELECTRONICS LTD.
+        </strong>
+    </p>
+
 </footer>
 
+<!-- Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- Main JS -->
 <script src="script.js"></script>
+
 </body>
 </html>
