@@ -4,91 +4,80 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sell Item - Campus Market</title>
-
-    <link rel="stylesheet" href="css/style.css">
-
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-
-    <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght=300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent-emerald: #10b981;
+            --border-color: #334155;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background-color: var(--bg-primary); color: var(--text-primary); min-height: 100vh; display: flex; flex-direction: column; }
+        header { background-color: var(--bg-secondary); border-bottom: 1px solid var(--border-color); padding: 1rem 5%; display: flex; justify-content: space-between; align-items: center; }
+        header .logo { font-size: 1.4rem; font-weight: 700; color: var(--accent-emerald); display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        nav { display: flex; gap: 20px; }
+        nav a { color: var(--text-secondary); text-decoration: none; font-weight: 500; font-size: 0.95rem; display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 6px; }
+        nav a:hover, nav a.active { color: var(--text-primary); background-color: var(--border-color); }
+        nav a.active { border-bottom: 2px solid var(--accent-emerald); border-radius: 6px 6px 0 0; }
+        .sell-container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 3rem 1rem; }
+        .sell-box { background: var(--bg-secondary); border: 1px solid var(--border-color); padding: 2.5rem; border-radius: 12px; width: 100%; max-width: 550px; }
+        .sell-box h1 { font-size: 1.8rem; margin-bottom: 20px; text-align: center; }
+        form { display: flex; flex-direction: column; gap: 15px; }
+        input, select, textarea { width: 100%; padding: 12px; background: var(--bg-primary); border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 6px; outline: none; font-size: 0.95rem; }
+        input:focus, select:focus, textarea:focus { border-color: var(--accent-emerald); }
+        input[type="file"] { padding: 8px; cursor: pointer; }
+        button { background: var(--accent-emerald); color: white; border: none; padding: 12px; border-radius: 6px; font-weight: 600; font-size: 1rem; cursor: pointer; transition: background 0.2s; }
+        button:hover { background: #059669; }
+        #msg { text-align: center; margin-top: 15px; font-weight: 500; font-size: 0.95rem; }
+        footer { background-color: var(--bg-secondary); border-top: 1px solid var(--border-color); padding: 1.5rem 5%; text-align: center; font-size: 0.9rem; color: var(--text-secondary); }
+        @media (max-width: 600px) { header { flex-direction: column; gap: 15px; padding: 1rem; } nav { width: 100%; justify-content: space-around; } }
+    </style>
 </head>
-
 <body>
 
 <header>
-
-    <div class="logo">
-        <i class="fa-solid fa-store"></i>
-        Campus Market
-    </div>
-
+    <a href="index.html" class="logo"><i class="fa-solid fa-store"></i> Campus Market</a>
     <nav>
-
-        <a href="index.html">
-            <i class="fa-solid fa-house"></i> Home
-        </a>
-
-        <a href="marketplace.html">
-            <i class="fa-solid fa-shop"></i> Marketplace
-        </a>
-
-        <a href="sell.html" class="active">
-            <i class="fa-solid fa-plus"></i> Sell
-        </a>
-
-        <a href="profile.html">
-            <i class="fa-solid fa-user"></i> Profile
-        </a>
-
+        <a href="index.html"><i class="fa-solid fa-house"></i> Home</a>
+        <a href="marketplace.html"><i class="fa-solid fa-shop"></i> Marketplace</a>
+        <a href="sell.html" class="active"><i class="fa-solid fa-plus"></i> Sell</a>
+        <a href="profile.html"><i class="fa-solid fa-user"></i> Profile</a>
     </nav>
-
 </header>
 
 <section class="sell-container">
-
     <div class="sell-box">
-
         <h1>Sell Your Item</h1>
-
         <form id="sellForm">
-
             <input type="text" id="title" placeholder="Item Title" required>
-
             <input type="number" id="price" placeholder="Price (K)" required>
-
             <select id="category" required>
                 <option value="">Select Category</option>
-                <option>Books</option>
-                <option>Electronics</option>
-                <option>Clothing</option>
-                <option>Phones</option>
-                <option>Furniture</option>
-                <option>Gaming</option>
+                <option value="Books">Books</option>
+                <option value="Electronics">Electronics</option>
+                <option value="Clothing">Clothing</option>
+                <option value="Phones">Phones</option>
+                <option value="Furniture">Furniture</option>
+                <option value="Gaming">Gaming</option>
             </select>
-
-            <input type="text" id="image" placeholder="Image URL (for now)" required>
-
-            <textarea id="description" placeholder="Item Description" rows="5" required></textarea>
-
+            <input type="text" id="contact" placeholder="WhatsApp Number (e.g. 26097xxxxxxx)" required>
+            <input type="file" id="image" accept="image/*" required>
+            <textarea id="description" placeholder="Item Description" rows="4" required></textarea>
             <button type="submit">Post Item</button>
-
         </form>
-
         <p id="msg"></p>
-
     </div>
-
 </section>
 
 <footer>
-    <p>© 2026 Campus Market</p>
+    <p>© 2026 Campus Market. Engineered by EMMANUEL ELECTRONICS LTD.</p>
 </footer>
 
-<!-- Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<!-- Your JS -->
-<script src="js/script.js"></script>
-
+<script src="script.js"></script>
 </body>
 </html>
