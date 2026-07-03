@@ -5,205 +5,99 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Campus Market</title>
 
-    <link rel="stylesheet" href="css/style.css">
+    <!-- Updated path to look directly for style.css in the main folder -->
+    <link rel="stylesheet" href="style.css">
 
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght=300;400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Font Awesome -->
-    <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
 
 <body>
 
 <header>
+    <div class="logo">
+        <i class="fa-solid fa-store"></i>
+        Campus Market
+    </div>
 
-<div class="logo">
-    <i class="fa-solid fa-store"></i>
-    Campus Market
-</div>
-
-<nav>
-
-<a href="index.html" class="active">
-<i class="fa-solid fa-house"></i> Home
-</a>
-
-<a href="marketplace.html">
-<i class="fa-solid fa-shop"></i> Marketplace
-</a>
-
-<a href="sell.html">
-<i class="fa-solid fa-plus"></i> Sell
-</a>
-
-<a href="profile.html">
-<i class="fa-solid fa-user"></i> Profile
-</a>
-
-</nav>
-
+    <nav>
+        <a href="index.html" class="active">
+            <i class="fa-solid fa-house"></i> Home
+        </a>
+        <a href="marketplace.html">
+            <i class="fa-solid fa-shop"></i> Marketplace
+        </a>
+        <a href="sell.html">
+            <i class="fa-solid fa-plus"></i> Sell
+        </a>
+        <a href="profile.html">
+            <i class="fa-solid fa-user"></i> Profile
+        </a>
+    </nav>
 </header>
 
 <section class="hero">
+    <h1>Buy & Sell Safely on Campus</h1>
+    <p>Find textbooks, electronics, clothes, hostel furniture and more.</p>
 
-<h1>Buy & Sell Safely on Campus</h1>
-
-<p>
-Find textbooks, electronics, clothes,
-hostel furniture and more.
-</p>
-
-<div class="search-box">
-
-<input
-type="text"
-placeholder="Search for anything...">
-
-<button>
-<i class="fa-solid fa-magnifying-glass"></i>
-</button>
-
-</div>
-
+    <div class="search-box">
+        <input type="text" placeholder="Search for anything...">
+        <button><i class="fa-solid fa-magnifying-glass"></i></button>
+    </div>
 </section>
 
 <section class="categories">
-
-<h2>Categories</h2>
-
-<div class="category-grid">
-
-<div class="category">
-<i class="fa-solid fa-book"></i>
-<p>Books</p>
-</div>
-
-<div class="category">
-<i class="fa-solid fa-laptop"></i>
-<p>Electronics</p>
-</div>
-
-<div class="category">
-<i class="fa-solid fa-shirt"></i>
-<p>Clothing</p>
-</div>
-
-<div class="category">
-<i class="fa-solid fa-mobile-screen"></i>
-<p>Phones</p>
-</div>
-
-<div class="category">
-<i class="fa-solid fa-chair"></i>
-<p>Furniture</p>
-</div>
-
-<div class="category">
-<i class="fa-solid fa-gamepad"></i>
-<p>Gaming</p>
-</div>
-
-</div>
-
+    <h2>Categories</h2>
+    <div class="category-grid">
+        <div class="category">
+            <i class="fa-solid fa-book"></i>
+            <p>Books</p>
+        </div>
+        <div class="category">
+            <i class="fa-solid fa-laptop"></i>
+            <p>Electronics</p>
+        </div>
+        <div class="category">
+            <i class="fa-solid fa-shirt"></i>
+            <p>Clothing</p>
+        </div>
+        <div class="category">
+            <i class="fa-solid fa-mobile-screen"></i>
+            <p>Phones</p>
+        </div>
+        <div class="category">
+            <i class="fa-solid fa-chair"></i>
+            <p>Furniture</p>
+        </div>
+        <div class="category">
+            <i class="fa-solid fa-gamepad"></i>
+            <p>Gaming</p>
+        </div>
+    </div>
 </section>
 
 <section class="products">
-
-<h2>Latest Listings</h2>
-
-<div class="product-grid">
-
-<div class="card">
-
-<img
-src="https://picsum.photos/300/200?1">
-
-<h3>HP Laptop</h3>
-
-<p class="price">K4,800</p>
-
-<p class="location">
-University of Zambia
-</p>
-
-<a href="item.html">
-<button>View</button>
-</a>
-
-</div>
-
-<div class="card">
-
-<img
-src="https://picsum.photos/300/200?2">
-
-<h3>Calculus Textbook</h3>
-
-<p class="price">K350</p>
-
-<p class="location">
-CBU
-</p>
-
-<a href="item.html">
-<button>View</button>
-</a>
-
-</div>
-
-<div class="card">
-
-<img
-src="https://picsum.photos/300/200?3">
-
-<h3>Office Chair</h3>
-
-<p class="price">K900</p>
-
-<p class="location">
-Mulungushi University
-</p>
-
-<a href="item.html">
-<button>View</button>
-</a>
-
-</div>
-
-<div class="card">
-
-<img
-src="https://picsum.photos/300/200?4">
-
-<h3>Samsung Phone</h3>
-
-<p class="price">K2,300</p>
-
-<p class="location">
-UNZA
-</p>
-
-<a href="item.html">
-<button>View</button>
-</a>
-
-</div>
-
-</div>
-
+    <h2>Latest Listings</h2>
+    <div class="product-grid">
+        <!-- Products from Supabase will appear here -->
+    </div>
 </section>
 
 <footer>
-
-<p>
-© 2026 Campus Market
-</p>
-
+    <p>© 2026 Campus Market. All Rights Reserved.</p>
+    <p style="font-size: 0.75rem; color: #6b7280; margin-top: 4px; letter-spacing: 0.5px;">
+        Engineered & Maintained by <strong style="color: var(--accent-emerald);">EMMANUEL ELECTRONICS LTD.</strong>
+    </p>
 </footer>
 
-<script src="js/script.js"></script>
+<!-- Supabase Library -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- Updated path to look directly for script.js in the main folder -->
+<script src="script.js"></script>
 
 </body>
 </html>
+
