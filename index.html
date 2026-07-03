@@ -3,369 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Campus Market</title>
+    <title>Sign Up - Campus Market</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght=300;400;500;600;700&display=swap" rel="stylesheet">
-
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
-    <style>
-        :root {
-            --bg-primary: #0f172a;
-            --bg-secondary: #1e293b;
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --accent-emerald: #10b981;
-            --accent-hover: #059669;
-            --card-bg: #1e293b;
-            --border-color: #334155;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        body {
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* Header & Navigation */
-        header {
-            background-color: var(--bg-secondary);
-            border-bottom: 1px solid var(--border-color);
-            padding: 1rem 5%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        header .logo {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: var(--accent-emerald);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        nav {
-            display: flex;
-            gap: 20px;
-        }
-
-        nav a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 12px;
-            border-radius: 6px;
-            transition: all 0.3s ease;
-        }
-
-        nav a:hover, nav a.active {
-            color: var(--text-primary);
-            background-color: var(--border-color);
-        }
-
-        nav a.active {
-            border-bottom: 2px solid var(--accent-emerald);
-            border-radius: 6px 6px 0 0;
-        }
-
-        /* Hero Section */
-        .hero {
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            padding: 4rem 5%;
-            text-align: center;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .hero h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
-
-        .hero p {
-            color: var(--text-secondary);
-            font-size: 1.1rem;
-            margin-bottom: 25px;
-        }
-
-        .search-box {
-            max-width: 500px;
-            margin: 0 auto;
-            display: flex;
-            background: var(--bg-primary);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        .search-box input {
-            flex: 1;
-            padding: 12px;
-            background: transparent;
-            border: none;
-            color: var(--text-primary);
-            outline: none;
-            font-size: 0.95rem;
-        }
-
-        .search-box button {
-            background: var(--accent-emerald);
-            color: white;
-            border: none;
-            padding: 0 20px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .search-box button:hover {
-            background: var(--accent-hover);
-        }
-
-        /* Categories Section */
-        .categories {
-            padding: 3rem 5%;
-        }
-
-        .categories h2, .products h2 {
-            font-size: 1.5rem;
-            margin-bottom: 20px;
-            position: relative;
-            padding-left: 12px;
-        }
-
-        .categories h2::before, .products h2::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 4px;
-            bottom: 4px;
-            width: 4px;
-            background: var(--accent-emerald);
-            border-radius: 2px;
-        }
-
-        .category-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(110px, 110px));
-            gap: 15px;
-            justify-content: center;
-        }
-
-        .category {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            padding: 15px;
-            text-align: center;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .category:hover {
-            transform: translateY(-3px);
-            border-color: var(--accent-emerald);
-        }
-
-        .category i {
-            font-size: 1.5rem;
-            color: var(--accent-emerald);
-            margin-bottom: 8px;
-        }
-
-        .category p {
-            font-size: 0.85rem;
-            font-weight: 500;
-        }
-
-        /* Products Grid Section */
-        .products {
-            padding: 0 5% 4rem 5%;
-            flex: 1;
-        }
-
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 20px;
-        }
-
-        /* Dynamic Product Cards */
-        .card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            transition: transform 0.2s;
-        }
-
-        .card:hover {
-            transform: translateY(-4px);
-        }
-
-        .card img {
-            width: 100%;
-            height: 180px;
-            object-fit: cover;
-            background: #0f172a;
-        }
-
-        .card h3 {
-            font-size: 1rem;
-            padding: 12px 12px 4px 12px;
-            font-weight: 600;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .card p {
-            color: var(--accent-emerald);
-            font-weight: 600;
-            font-size: 1.1rem;
-            padding: 0 12px 12px 12px;
-        }
-
-        .card button {
-            background: var(--border-color);
-            color: var(--text-primary);
-            border: none;
-            padding: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            margin: auto 12px 12px 12px;
-            border-radius: 6px;
-            transition: background 0.2s;
-        }
-
-        .card button:hover {
-            background: var(--accent-emerald);
-            color: white;
-        }
-
-        /* Footer */
-        footer {
-            background-color: var(--bg-secondary);
-            border-top: 1px solid var(--border-color);
-            padding: 1.5rem 5%;
-            text-align: center;
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-        }
-
-        /* Responsive Breakpoint for Mobile Devices */
-        @media (max-width: 600px) {
-            header {
-                flex-direction: column;
-                gap: 15px;
-                padding: 1rem;
-            }
-            nav {
-                width: 100%;
-                justify-content: space-around;
-                gap: 0;
-            }
-            nav a {
-                padding: 6px 8px;
-                font-size: 0.85rem;
-            }
-            .hero h1 {
-                font-size: 1.8rem;
-            }
-            .hero p {
-                font-size: 0.95rem;
-            }
-        }
-    </style>
 </head>
 
 <body>
 
 <header>
     <div class="logo">
-        <i class="fa-solid fa-store"></i>
-        Campus Market
+        <i class="fa-solid fa-store"></i> Campus Market
     </div>
-
-    <nav>
-        <a href="index.html" class="active">
-            <i class="fa-solid fa-house"></i> Home
-        </a>
-        <a href="marketplace.html">
-            <i class="fa-solid fa-shop"></i> Marketplace
-        </a>
-        <a href="sell.html">
-            <i class="fa-solid fa-plus"></i> Sell
-        </a>
-        <a href="profile.html">
-            <i class="fa-solid fa-user"></i> Profile
-        </a>
-    </nav>
 </header>
 
-<section class="hero">
-    <h1>Buy & Sell Safely on Campus</h1>
-    <p>Find textbooks, electronics, clothes, hostel furniture and more.</p>
+<section class="auth-container">
+    <div class="auth-box">
+        <h2>Create Account</h2>
 
-    <div class="search-box">
-        <input type="text" placeholder="Search for anything...">
-        <button><i class="fa-solid fa-magnifying-glass"></i></button>
+        <!-- Prevent default form reload and hook up your JS logic -->
+        <form onsubmit="event.preventDefault(); signup();">
+            <input type="text" id="username" placeholder="Full Name" required>
+            
+            <!-- Added id="email" so your js script can read the value -->
+            <input type="email" id="email" placeholder="University Email" required>
+
+            <!-- Added id="password" so your js script can read the value -->
+            <input type="password" id="password" placeholder="Password" required>
+
+            <button type="submit">
+                <i class="fa-solid fa-user-plus"></i> Sign Up
+            </button>
+        </form>
+
+        <p id="msg" style="margin-top: 15px; font-weight: 500;"></p>
+
+        <p style="margin-top: 15px; font-size: 0.9rem; color: var(--text-secondary);">
+            Already have an account? 
+            <a href="login.html" style="color: var(--accent-emerald); text-decoration: none; font-weight: 600;">Login</a>
+        </p>
     </div>
-</section>
-
-<section class="categories">
-    <h2>Categories</h2>
-    <div class="category-grid">
-        <div class="category">
-            <i class="fa-solid fa-book"></i>
-            <p>Books</p>
-        </div>
-        <div class="category">
-            <i class="fa-solid fa-laptop"></i>
-            <p>Electronics</p>
-        </div>
-        <div class="category">
-            <i class="fa-solid fa-shirt"></i>
-            <p>Clothing</p>
-        </div>
-        <div class="category">
-            <i class="fa-solid fa-mobile-screen"></i>
-            <p>Phones</p>
-        </div>
-        <div class="category">
-            <i class="fa-solid fa-chair"></i>
-            <p>Furniture</p>
-        </div>
-        <div class="category">
-            <i class="fa-solid fa-gamepad"></i>
-            <p>Gaming</p>
-        </div>
-    </div>
-</section>
-
-<section class="products">
-    <h2>Latest Listings</h2>
-    <div class="product-grid">
-        </div>
 </section>
 
 <footer>
@@ -375,8 +53,10 @@
     </p>
 </footer>
 
+<!-- Pull in Supabase & your local script layer to execute the registration pipeline -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="script.js"></script>
+<script src="js/script.js"></script>
 
 </body>
 </html>
+
