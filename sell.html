@@ -50,13 +50,13 @@
 
         <h1>Sell Your Item</h1>
 
-        <form>
+        <form id="sellForm">
 
-            <input type="text" placeholder="Item Title" required>
+            <input type="text" id="title" placeholder="Item Title" required>
 
-            <input type="number" placeholder="Price (K)" required>
+            <input type="number" id="price" placeholder="Price (K)" required>
 
-            <select required>
+            <select id="category" required>
                 <option value="">Select Category</option>
                 <option>Books</option>
                 <option>Electronics</option>
@@ -66,15 +66,15 @@
                 <option>Gaming</option>
             </select>
 
-            <input type="text" placeholder="Location (Campus)" required>
+            <input type="text" id="image" placeholder="Image URL (for now)" required>
 
-            <textarea placeholder="Item Description" rows="5" required></textarea>
-
-            <input type="file" accept="image/*" required>
+            <textarea id="description" placeholder="Item Description" rows="5" required></textarea>
 
             <button type="submit">Post Item</button>
 
         </form>
+
+        <p id="msg"></p>
 
     </div>
 
@@ -83,6 +83,12 @@
 <footer>
     <p>© 2026 Campus Market</p>
 </footer>
+
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- Your JS -->
+<script src="js/script.js"></script>
 
 </body>
 </html>

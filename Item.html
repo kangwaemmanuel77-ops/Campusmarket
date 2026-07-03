@@ -24,21 +24,10 @@
 
     <nav>
 
-        <a href="index.html">
-            <i class="fa-solid fa-house"></i> Home
-        </a>
-
-        <a href="marketplace.html">
-            <i class="fa-solid fa-shop"></i> Marketplace
-        </a>
-
-        <a href="sell.html">
-            <i class="fa-solid fa-plus"></i> Sell
-        </a>
-
-        <a href="profile.html">
-            <i class="fa-solid fa-user"></i> Profile
-        </a>
+        <a href="index.html">Home</a>
+        <a href="marketplace.html">Marketplace</a>
+        <a href="sell.html">Sell</a>
+        <a href="profile.html">Profile</a>
 
     </nav>
 
@@ -46,32 +35,8 @@
 
 <section class="item-container">
 
-    <div class="item-box">
-
-        <img src="https://picsum.photos/600/400" alt="Item Image">
-
-        <div class="item-info">
-
-            <h1>Dell Laptop</h1>
-
-            <h2 class="price">K5,200</h2>
-
-            <p class="description">
-                High performance Dell laptop perfect for programming,
-                design work, and assignments. Battery in good condition.
-            </p>
-
-            <p class="location">
-                📍 UNZA Campus
-            </p>
-
-            <button class="contact-btn">
-                <i class="fa-brands fa-whatsapp"></i>
-                Contact Seller
-            </button>
-
-        </div>
-
+    <div class="item-box" id="itemBox">
+        <p>Loading item...</p>
     </div>
 
 </section>
@@ -79,6 +44,12 @@
 <footer>
     <p>© 2026 Campus Market</p>
 </footer>
+
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- JS -->
+<script src="js/script.js"></script>
 
 </body>
 </html>

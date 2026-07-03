@@ -5,41 +5,87 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Campus Market</title>
 
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="./css/style.css">
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
 
 <body>
 
 <header>
-    <div class="logo">Campus Market</div>
+
+    <div class="logo">
+        <i class="fa-solid fa-store"></i>
+        Campus Market
+    </div>
+
+    <nav>
+
+        <a href="index.html">
+            <i class="fa-solid fa-house"></i> Home
+        </a>
+
+        <a href="marketplace.html">
+            <i class="fa-solid fa-shop"></i> Marketplace
+        </a>
+
+        <a href="sell.html">
+            <i class="fa-solid fa-plus"></i> Sell
+        </a>
+
+        <a href="profile.html">
+            <i class="fa-solid fa-user"></i> Profile
+        </a>
+
+    </nav>
+
 </header>
 
-<section class="auth-container">
+<section class="auth-section">
 
     <div class="auth-box">
 
-        <h2>Login</h2>
+        <h1>Welcome Back</h1>
 
-        <form>
+        <p>Login or create an account to continue.</p>
 
-            <input type="email" placeholder="Email" required>
+        <input
+            type="email"
+            id="email"
+            placeholder="Email Address"
+            required>
 
-            <input type="password" placeholder="Password" required>
+        <input
+            type="password"
+            id="password"
+            placeholder="Password"
+            required>
 
-            <button type="submit">Login</button>
+        <button onclick="login()">
+            <i class="fa-solid fa-right-to-bracket"></i>
+            Login
+        </button>
 
-        </form>
+        <button onclick="signup()">
+            <i class="fa-solid fa-user-plus"></i>
+            Create Account
+        </button>
 
-        <p>
-            Don't have an account?
-            <a href="signup.html">Sign up</a>
-        </p>
+        <p id="msg"></p>
 
     </div>
 
 </section>
+
+<footer>
+    <p>© 2026 Campus Market</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/script.js"></script>
 
 </body>
 </html>
