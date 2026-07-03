@@ -6,7 +6,9 @@
     <title>Campus Market</title>
 
     <link rel="stylesheet" href="css/style.css">
+
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
 
@@ -40,19 +42,22 @@
     <p>Find textbooks, electronics, clothes, and more.</p>
 
     <div class="search-box">
-        <input type="text" placeholder="Search for items...">
-        <button><i class="fa-solid fa-magnifying-glass"></i></button>
+        <input type="text" placeholder="Search for items..." id="homeSearch">
+        <button id="homeSearchBtn">
+            <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
     </div>
 </section>
 
 <!-- CATEGORIES -->
 <section class="categories">
     <h2>Categories</h2>
+
     <div class="category-grid">
         <div class="category"><i class="fa-solid fa-book"></i><p>Books</p></div>
         <div class="category"><i class="fa-solid fa-laptop"></i><p>Electronics</p></div>
         <div class="category"><i class="fa-solid fa-shirt"></i><p>Clothing</p></div>
-        <div class="category"><i class="fa-solid fa-mobile"></i><p>Phones</p></div>
+        <div class="category"><i class="fa-solid fa-mobile-screen"></i><p>Phones</p></div>
         <div class="category"><i class="fa-solid fa-chair"></i><p>Furniture</p></div>
         <div class="category"><i class="fa-solid fa-gamepad"></i><p>Gaming</p></div>
     </div>
@@ -71,8 +76,28 @@
 <!-- Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<!-- YOUR JS -->
+<!-- JS -->
 <script src="js/script.js"></script>
+
+<!-- HOME SAFE SCRIPT (IMPORTANT FIX) -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const input = document.getElementById("homeSearch");
+    const btn = document.getElementById("homeSearchBtn");
+
+    function goSearch() {
+        const value = input.value.trim();
+        if (value !== "") {
+            window.location.href = "marketplace.html?search=" + encodeURIComponent(value);
+        }
+    }
+
+    btn.addEventListener("click", goSearch);
+    input.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") goSearch();
+    });
+});
+</script>
 
 </body>
 </html>
