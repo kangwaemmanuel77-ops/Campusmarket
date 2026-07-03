@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up - Campus Market</title>
+    <title>Campus Market</title>
 
     <link rel="stylesheet" href="css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
 
@@ -14,49 +14,65 @@
 
 <header>
     <div class="logo">
-        <i class="fa-solid fa-store"></i> Campus Market
+        <i class="fa-solid fa-store"></i>
+        Campus Market
     </div>
+
+    <nav>
+        <a href="index.html" class="active">
+            <i class="fa-solid fa-house"></i> Home
+        </a>
+        <a href="marketplace.html">
+            <i class="fa-solid fa-shop"></i> Marketplace
+        </a>
+        <a href="sell.html">
+            <i class="fa-solid fa-plus"></i> Sell
+        </a>
+        <a href="profile.html">
+            <i class="fa-solid fa-user"></i> Profile
+        </a>
+    </nav>
 </header>
 
-<section class="auth-container">
-    <div class="auth-box">
-        <h2>Create Account</h2>
+<!-- HERO -->
+<section class="hero">
+    <h1>Buy & Sell Safely on Campus</h1>
+    <p>Find textbooks, electronics, clothes, and more.</p>
 
-        <!-- Prevent default form reload and hook up your JS logic -->
-        <form onsubmit="event.preventDefault(); signup();">
-            <input type="text" id="username" placeholder="Full Name" required>
-            
-            <!-- Added id="email" so your js script can read the value -->
-            <input type="email" id="email" placeholder="University Email" required>
-
-            <!-- Added id="password" so your js script can read the value -->
-            <input type="password" id="password" placeholder="Password" required>
-
-            <button type="submit">
-                <i class="fa-solid fa-user-plus"></i> Sign Up
-            </button>
-        </form>
-
-        <p id="msg" style="margin-top: 15px; font-weight: 500;"></p>
-
-        <p style="margin-top: 15px; font-size: 0.9rem; color: var(--text-secondary);">
-            Already have an account? 
-            <a href="login.html" style="color: var(--accent-emerald); text-decoration: none; font-weight: 600;">Login</a>
-        </p>
+    <div class="search-box">
+        <input type="text" placeholder="Search for items...">
+        <button><i class="fa-solid fa-magnifying-glass"></i></button>
     </div>
 </section>
 
+<!-- CATEGORIES -->
+<section class="categories">
+    <h2>Categories</h2>
+    <div class="category-grid">
+        <div class="category"><i class="fa-solid fa-book"></i><p>Books</p></div>
+        <div class="category"><i class="fa-solid fa-laptop"></i><p>Electronics</p></div>
+        <div class="category"><i class="fa-solid fa-shirt"></i><p>Clothing</p></div>
+        <div class="category"><i class="fa-solid fa-mobile"></i><p>Phones</p></div>
+        <div class="category"><i class="fa-solid fa-chair"></i><p>Furniture</p></div>
+        <div class="category"><i class="fa-solid fa-gamepad"></i><p>Gaming</p></div>
+    </div>
+</section>
+
+<!-- PRODUCTS -->
+<section class="products">
+    <h2>Latest Listings</h2>
+    <div class="product-grid"></div>
+</section>
+
 <footer>
-    <p>© 2026 Campus Market. All Rights Reserved.</p>
-    <p style="font-size: 0.75rem; color: #6b7280; margin-top: 4px; letter-spacing: 0.5px;">
-        Engineered & Maintained by <strong style="color: var(--accent-emerald);">EMMANUEL ELECTRONICS LTD.</strong>
-    </p>
+    <p>© 2026 Campus Market</p>
 </footer>
 
-<!-- Pull in Supabase & your local script layer to execute the registration pipeline -->
+<!-- Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- YOUR JS -->
 <script src="js/script.js"></script>
 
 </body>
 </html>
-
