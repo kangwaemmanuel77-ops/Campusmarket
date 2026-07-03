@@ -4,52 +4,65 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Item Details - Campus Market</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght=300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <style>
-        :root {
-            --bg-primary: #0f172a;
-            --bg-secondary: #1e293b;
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --accent-emerald: #10b981;
-            --border-color: #334155;
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { background-color: var(--bg-primary); color: var(--text-primary); min-height: 100vh; }
-        header { background-color: var(--bg-secondary); border-bottom: 1px solid var(--border-color); padding: 1rem 5%; display: flex; justify-content: space-between; align-items: center; }
-        header .logo { font-size: 1.4rem; font-weight: 700; color: var(--accent-emerald); text-decoration: none; display: flex; align-items: center; gap: 10px; }
-        nav { display: flex; gap: 20px; }
-        nav a { color: var(--text-secondary); text-decoration: none; font-weight: 500; display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 6px; }
-        nav a:hover { background-color: var(--border-color); color: var(--text-primary); }
-        .container { max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
-        #itemBox { background: var(--bg-secondary); border: 1px solid var(--border-color); padding: 2rem; border-radius: 12px; display: flex; flex-direction: column; gap: 1.5rem; }
-        #itemBox img { border-radius: 8px; border: 1px solid var(--border-color); max-height: 400px; object-fit: cover; }
-        h2 { font-size: 1.8rem; font-weight: 700; }
-        p { color: var(--text-secondary); line-height: 1.6; }
-        p b { color: var(--text-primary); }
-    </style>
+
+    <link rel="stylesheet" href="style.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
+
 <body>
 
 <header>
-    <a href="index.html" class="logo"><i class="fa-solid fa-store"></i> Campus Market</a>
+    <div class="logo">
+        <i class="fa-solid fa-store"></i>
+        Campus Market
+    </div>
+
     <nav>
-        <a href="index.html"><i class="fa-solid fa-house"></i> Home</a>
-        <a href="marketplace.html"><i class="fa-solid fa-shop"></i> Marketplace</a>
-        <a href="sell.html"><i class="fa-solid fa-plus"></i> Sell</a>
-        <a href="profile.html"><i class="fa-solid fa-user"></i> Profile</a>
+        <a href="index.html">
+            <i class="fa-solid fa-house"></i>
+            Home
+        </a>
+
+        <a href="marketplace.html">
+            <i class="fa-solid fa-shop"></i>
+            Marketplace
+        </a>
+
+        <a href="sell.html">
+            <i class="fa-solid fa-plus"></i>
+            Sell
+        </a>
+
+        <a href="profile.html">
+            <i class="fa-solid fa-user"></i>
+            Profile
+        </a>
     </nav>
 </header>
 
-<div class="container">
-    <div id="itemBox">
-        <p style="text-align: center; color: var(--text-secondary);">⏳ Loading item details from database...</p>
+<section class="item-container">
+    <div class="item-box" id="itemBox">
+        <p style="text-align:center;">Loading item...</p>
     </div>
-</div>
+</section>
+
+<footer>
+    <p>© 2026 Campus Market. All Rights Reserved.</p>
+
+    <p style="font-size:12px;color:#6b7280;margin-top:5px;">
+        Engineered & Maintained by
+        <strong style="color:#10b981;">
+            EMMANUEL ELECTRONICS LTD.
+        </strong>
+    </p>
+</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="script.js"></script>
+
 </body>
 </html>
-}
