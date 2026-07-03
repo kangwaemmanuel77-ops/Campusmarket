@@ -4,68 +4,82 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up - Campus Market</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght=300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <style>
-        :root {
-            --bg-primary: #0f172a;
-            --bg-secondary: #1e293b;
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --accent-emerald: #10b981;
-            --border-color: #334155;
-            --text-danger: #ff4d4d;
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { background-color: var(--bg-primary); color: var(--text-primary); min-height: 100vh; display: flex; flex-direction: column; }
-        header { background-color: var(--bg-secondary); border-bottom: 1px solid var(--border-color); padding: 1rem 5%; display: flex; justify-content: space-between; align-items: center; }
-        header .logo { font-size: 1.4rem; font-weight: 700; color: var(--accent-emerald); display: flex; align-items: center; gap: 10px; text-decoration: none; }
-        .auth-section { flex: 1; display: flex; justify-content: center; align-items: center; padding: 3rem 1rem; }
-        .auth-box { background: var(--bg-secondary); border: 1px solid var(--border-color); padding: 2.5rem; border-radius: 12px; width: 100%; max-width: 450px; display: flex; flex-direction: column; gap: 15px; }
-        .auth-box h2 { font-size: 1.8rem; font-weight: 700; text-align: center; }
-        .auth-box p { color: var(--text-secondary); font-size: 0.95rem; text-align: center; margin-bottom: 10px; }
-        input { width: 100%; padding: 12px; background: var(--bg-primary); border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 6px; outline: none; font-size: 0.95rem; }
-        input:focus { border-color: var(--accent-emerald); }
-        button { width: 100%; background: var(--accent-emerald); color: white; border: none; padding: 12px; border-radius: 6px; font-weight: 600; font-size: 1rem; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; transition: background 0.2s; }
-        button:hover { background: #059669; }
-        .auth-box p.switch-text { font-size: 0.9rem; text-align: center; margin-top: 10px; }
-        .auth-box p.switch-text a { color: var(--accent-emerald); text-decoration: none; font-weight: 500; }
-        .auth-box p.switch-text a:hover { text-decoration: underline; }
-        #msg { text-align: center; font-size: 0.9rem; font-weight: 500; min-height: 20px; margin-top: 5px; }
-        footer { background-color: var(--bg-secondary); border-top: 1px solid var(--border-color); padding: 1.5rem 5%; text-align: center; font-size: 0.9rem; color: var(--text-secondary); }
-    </style>
+
+    <link rel="stylesheet" href="style.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
+
 <body>
 
 <header>
-    <a href="index.html" class="logo"><i class="fa-solid fa-store"></i> Campus Market</a>
+    <div class="logo">
+        <i class="fa-solid fa-store"></i>
+        Campus Market
+    </div>
 </header>
 
-<section class="auth-section">
+<section class="auth-container">
     <div class="auth-box">
+
         <h2>Create Account</h2>
-        <p>Join other students buying and selling on campus.</p>
-        
+
         <form onsubmit="event.preventDefault(); signup();">
-            <input type="text" placeholder="Full Name" required style="margin-bottom: 15px;">
-            <input type="email" id="email" placeholder="University Email" required style="margin-bottom: 15px;">
-            <input type="password" id="password" placeholder="Password" required style="margin-bottom: 20px;">
-            <button type="submit"><i class="fa-solid fa-user-plus"></i> Sign Up</button>
+
+            <input
+                type="text"
+                id="username"
+                placeholder="Full Name"
+                required
+            >
+
+            <input
+                type="email"
+                id="email"
+                placeholder="University Email"
+                required
+            >
+
+            <input
+                type="password"
+                id="password"
+                placeholder="Password"
+                required
+            >
+
+            <button type="submit">
+                <i class="fa-solid fa-user-plus"></i>
+                Sign Up
+            </button>
+
         </form>
 
-        <p class="switch-text">
-            Already have an account? 
+        <p id="msg"></p>
+
+        <p style="margin-top:20px;">
+            Already have an account?
             <a href="login.html">Login</a>
         </p>
-        <p id="msg"></p>
+
     </div>
 </section>
 
 <footer>
-    <p>© 2026 Campus Market. Engineered by EMMANUEL ELECTRONICS LTD.</p>
+    <p>© 2026 Campus Market. All Rights Reserved.</p>
+
+    <p style="font-size:12px;color:#6b7280;">
+        Engineered & Maintained by
+        <strong style="color:#10b981;">
+            EMMANUEL ELECTRONICS LTD.
+        </strong>
+    </p>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="script.js"></script>
+
 </body>
 </html>
