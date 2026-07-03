@@ -4,105 +4,94 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Marketplace - Campus Market</title>
-
-    <link rel="stylesheet" href="css/style.css">
-
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-
-    <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght=300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent-emerald: #10b981;
+            --accent-hover: #059669;
+            --card-bg: #1e293b;
+            --border-color: #334155;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background-color: var(--bg-primary); color: var(--text-primary); min-height: 100vh; display: flex; flex-direction: column; }
+        header { background-color: var(--bg-secondary); border-bottom: 1px solid var(--border-color); padding: 1rem 5%; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+        header .logo { font-size: 1.4rem; font-weight: 700; color: var(--accent-emerald); display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        nav { display: flex; gap: 20px; }
+        nav a { color: var(--text-secondary); text-decoration: none; font-weight: 500; font-size: 0.95rem; display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 6px; transition: all 0.3s ease; }
+        nav a:hover, nav a.active { color: var(--text-primary); background-color: var(--border-color); }
+        nav a.active { border-bottom: 2px solid var(--accent-emerald); border-radius: 6px 6px 0 0; }
+        .hero { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); padding: 3rem 5%; text-align: center; border-bottom: 1px solid var(--border-color); }
+        .hero h1 { font-size: 2.2rem; font-weight: 700; margin-bottom: 10px; }
+        .hero p { color: var(--text-secondary); font-size: 1rem; margin-bottom: 25px; }
+        .search-container { max-width: 600px; margin: 0 auto; display: flex; gap: 10px; flex-wrap: wrap; }
+        .search-box { flex: 1; min-width: 250px; display: flex; background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; }
+        .search-box input { flex: 1; padding: 12px; background: transparent; border: none; color: var(--text-primary); outline: none; font-size: 0.95rem; }
+        .search-box button { background: var(--accent-emerald); color: white; border: none; padding: 0 20px; cursor: pointer; transition: background 0.2s; }
+        .search-box button:hover { background: var(--accent-hover); }
+        .filter-box { padding: 10px 15px; background: var(--bg-primary); border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 8px; outline: none; font-size: 0.95rem; cursor: pointer; }
+        .products { padding: 3rem 5%; flex: 1; }
+        .products h2 { font-size: 1.5rem; margin-bottom: 20px; position: relative; padding-left: 12px; }
+        .products h2::before { content: ''; position: absolute; left: 0; top: 4px; bottom: 4px; width: 4px; background: var(--accent-emerald); border-radius: 2px; }
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
+        .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.2s; }
+        .card:hover { transform: translateY(-4px); }
+        .card img { width: 100%; height: 180px; object-fit: cover; background: #0f172a; }
+        .card h3 { font-size: 1rem; padding: 12px 12px 4px 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .card p.price { color: var(--accent-emerald); font-weight: 600; font-size: 1.1rem; padding: 0 12px 12px 12px; }
+        .card button { background: var(--border-color); color: var(--text-primary); border: none; padding: 10px; font-weight: 600; cursor: pointer; margin: auto 12px 12px 12px; border-radius: 6px; transition: background 0.2s; }
+        .card button:hover { background: var(--accent-emerald); color: white; }
+        footer { background-color: var(--bg-secondary); border-top: 1px solid var(--border-color); padding: 1.5rem 5%; text-align: center; font-size: 0.9rem; color: var(--text-secondary); }
+        @media (max-width: 600px) { header { flex-direction: column; gap: 15px; padding: 1rem; } nav { width: 100%; justify-content: space-around; } .search-container { flex-direction: column; width: 100%; } .filter-box { width: 100%; } }
+    </style>
 </head>
-
 <body>
 
 <header>
-
-    <div class="logo">
-        <i class="fa-solid fa-store"></i>
-        Campus Market
-    </div>
-
+    <a href="index.html" class="logo"><i class="fa-solid fa-store"></i> Campus Market</a>
     <nav>
-
-        <a href="index.html">
-            <i class="fa-solid fa-house"></i> Home
-        </a>
-
-        <a href="marketplace.html" class="active">
-            <i class="fa-solid fa-shop"></i> Marketplace
-        </a>
-
-        <a href="sell.html">
-            <i class="fa-solid fa-plus"></i> Sell
-        </a>
-
-        <a href="profile.html">
-            <i class="fa-solid fa-user"></i> Profile
-        </a>
-
+        <a href="index.html"><i class="fa-solid fa-house"></i> Home</a>
+        <a href="marketplace.html" class="active"><i class="fa-solid fa-shop"></i> Marketplace</a>
+        <a href="sell.html"><i class="fa-solid fa-plus"></i> Sell</a>
+        <a href="profile.html"><i class="fa-solid fa-user"></i> Profile</a>
     </nav>
-
 </header>
 
 <section class="hero">
-
     <h1>Marketplace</h1>
     <p>Browse all items from students across campus</p>
-
-    <div class="search-box">
-        <input type="text" placeholder="Search items...">
-        <button><i class="fa-solid fa-magnifying-glass"></i></button>
+    <div class="search-container">
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Search items...">
+            <button id="searchBtn"><i class="fa-solid fa-magnifying-glass"></i></button>
+        </div>
+        <select id="categoryFilter" class="filter-box">
+            <option value="">All Categories</option>
+            <option value="Books">Books</option>
+            <option value="Electronics">Electronics</option>
+            <option value="Clothing">Clothing</option>
+            <option value="Phones">Phones</option>
+            <option value="Furniture">Furniture</option>
+            <option value="Gaming">Gaming</option>
+        </select>
     </div>
-
 </section>
 
 <section class="products">
-
     <h2>All Listings</h2>
-
-    <div class="product-grid">
-
-        <div class="card">
-            <img src="https://picsum.photos/300/200?10">
-            <h3>Dell Laptop</h3>
-            <p class="price">K5,200</p>
-            <p class="location">UNZA Campus</p>
-            <a href="item.html"><button>View</button></a>
+    <div class="product-grid" id="marketGrid">
         </div>
+</section>
 
-        <div class="card">
-            <img src="https://picsum.photos/300/200?11">
-            <h3>Physics Textbook</h3>
-            <p class="price">K250</p>
-            <p class="location">CBU</p>
-            <a href="item.html"><button>View</button></a>
-        </div>
+<footer>
+    <p>© 2026 Campus Market. Engineered by EMMANUEL ELECTRONICS LTD.</p>
+</footer>
 
-        <div class="card">
-            <img src="https://picsum.photos/300/200?12">
-            <h3>Gaming Headset</h3>
-            <p class="price">K600</p>
-            <p class="location">Mulungushi</p>
-            <a href="item.html"><button>View</button></a>
-        </div>
-
-        <div class="card">
-            <img src="https://picsum.photos/300/200?13">
-            <h3>Study Desk</h3>
-            <p class="price">K750</p>
-            <p class="location">UNZA</p>
-            <a href="item.html"><button>View</button></a>
-        </div>
-
-        <div class="card">
-            <img src="https://picsum.photos/300/200?14">
-            <h3>Smartphone</h3>
-            <p class="price">K1,800</p>
-            <p class="location">CBU</p>
-            <a href="item.html"><button>View</button></a>
-        </div>
-
-        <div class="card">
-            <img src="https://picsum.photos/300/200?15">
-            <h3>Room Chair</h3>
-            <p class="
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="script.js"></script>
+</body>
+</html>
