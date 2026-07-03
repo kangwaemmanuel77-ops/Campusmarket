@@ -52,4 +52,47 @@
 <header>
     <a href="index.html" class="logo"><i class="fa-solid fa-store"></i> Campus Market</a>
     <nav>
-        <a href
+        <a href="index.html"><i class="fa-solid fa-house"></i> Home</a>
+        <a href="marketplace.html"><i class="fa-solid fa-shop"></i> Marketplace</a>
+        <a href="sell.html"><i class="fa-solid fa-plus"></i> Sell</a>
+        <a href="profile.html" class="active"><i class="fa-solid fa-user"></i> Profile</a>
+    </nav>
+</header>
+
+<section class="profile-container">
+    <div class="profile-box">
+        <p id="profileMsg"></p>
+        <div class="profile-header">
+            <div class="avatar-wrapper">
+                <div class="avatar">
+                    <i class="fa-solid fa-user" id="defaultAvatarIcon"></i>
+                    <img id="profileDisplayImg" style="display: none;" alt="Avatar">
+                </div>
+                <label for="avatarInput" class="avatar-upload-btn">
+                    <i class="fa-solid fa-camera"></i>
+                </label>
+                <input type="file" id="avatarInput" accept="image/*" style="display: none;">
+            </div>
+            <div>
+                <h2 id="userEmail">Loading...</h2>
+                <p>University of Zambia</p>
+            </div>
+        </div>
+        <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+</section>
+
+<section class="products">
+    <h2>My Listings</h2>
+    <div class="product-grid" id="myItemsGrid">
+        </div>
+</section>
+
+<footer>
+    <p>© 2026 Campus Market. Engineered by EMMANUEL ELECTRONICS LTD.</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="script.js"></script>
+</body>
+</html>
