@@ -232,7 +232,6 @@ async function isFavorite(itemId) {
         `;
     }
         }
-        }
 
         searchBtn?.addEventListener("click", loadMarket);
         category?.addEventListener("change", loadMarket);
