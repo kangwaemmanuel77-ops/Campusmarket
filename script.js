@@ -386,3 +386,25 @@ box.innerHTML = `
         window.location.href = "index.html";
     };
 }
+.card-buttons{
+    display:flex;
+    gap:10px;
+    margin:15px;
+}
+
+.card-buttons button{
+    flex:1;
+}
+
+.favorite-btn{
+    background:#ff4d6d;
+    color:white;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.favorite-btn:hover{
+    background:#ff1f4b;
+}
