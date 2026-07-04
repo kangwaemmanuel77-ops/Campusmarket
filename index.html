@@ -5,10 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Campus Market</title>
 
-    <link rel="stylesheet" href="css/style.css">
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
 
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
 
@@ -36,65 +39,95 @@
     </nav>
 </header>
 
-<!-- HERO -->
 <section class="hero">
     <h1>Buy & Sell Safely on Campus</h1>
-    <p>Find textbooks, electronics, clothes, and more.</p>
+    <p>Find textbooks, electronics, clothes, furniture and more.</p>
 
     <div class="search-box">
-        <input type="text" placeholder="Search for items..." id="homeSearch">
+        <input type="text" id="homeSearch" placeholder="Search for anything...">
         <button id="homeSearchBtn">
             <i class="fa-solid fa-magnifying-glass"></i>
         </button>
     </div>
 </section>
 
-<!-- CATEGORIES -->
 <section class="categories">
     <h2>Categories</h2>
 
     <div class="category-grid">
-        <div class="category"><i class="fa-solid fa-book"></i><p>Books</p></div>
-        <div class="category"><i class="fa-solid fa-laptop"></i><p>Electronics</p></div>
-        <div class="category"><i class="fa-solid fa-shirt"></i><p>Clothing</p></div>
-        <div class="category"><i class="fa-solid fa-mobile-screen"></i><p>Phones</p></div>
-        <div class="category"><i class="fa-solid fa-chair"></i><p>Furniture</p></div>
-        <div class="category"><i class="fa-solid fa-gamepad"></i><p>Gaming</p></div>
+        <div class="category">
+            <i class="fa-solid fa-book"></i>
+            <p>Books</p>
+        </div>
+
+        <div class="category">
+            <i class="fa-solid fa-laptop"></i>
+            <p>Electronics</p>
+        </div>
+
+        <div class="category">
+            <i class="fa-solid fa-shirt"></i>
+            <p>Clothing</p>
+        </div>
+
+        <div class="category">
+            <i class="fa-solid fa-mobile-screen"></i>
+            <p>Phones</p>
+        </div>
+
+        <div class="category">
+            <i class="fa-solid fa-chair"></i>
+            <p>Furniture</p>
+        </div>
+
+        <div class="category">
+            <i class="fa-solid fa-gamepad"></i>
+            <p>Gaming</p>
+        </div>
     </div>
 </section>
 
-<!-- PRODUCTS -->
 <section class="products">
     <h2>Latest Listings</h2>
-    <div class="product-grid"></div>
+
+    <div class="product-grid">
+        <!-- Items loaded by script.js -->
+    </div>
 </section>
 
 <footer>
-    <p>© 2026 Campus Market</p>
+    <p>© 2026 Campus Market. All Rights Reserved.</p>
+    <p style="font-size:12px;color:#888;">
+        Engineered & Maintained by
+        <strong style="color:#10b981;">EMMANUEL ELECTRONICS LTD.</strong>
+    </p>
 </footer>
 
 <!-- Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<!-- JS -->
-<script src="js/script.js"></script>
+<!-- Main JS -->
+<script src="script.js"></script>
 
-<!-- HOME SAFE SCRIPT (IMPORTANT FIX) -->
 <script>
 document.addEventListener("DOMContentLoaded", () => {
     const input = document.getElementById("homeSearch");
-    const btn = document.getElementById("homeSearchBtn");
+    const button = document.getElementById("homeSearchBtn");
 
-    function goSearch() {
-        const value = input.value.trim();
-        if (value !== "") {
-            window.location.href = "marketplace.html?search=" + encodeURIComponent(value);
+    function searchMarketplace() {
+        const text = input.value.trim();
+        if (text) {
+            window.location.href =
+                "marketplace.html?search=" + encodeURIComponent(text);
         }
     }
 
-    btn.addEventListener("click", goSearch);
-    input.addEventListener("keypress", (e) => {
-        if (e.key === "Enter") goSearch();
+    button.addEventListener("click", searchMarketplace);
+
+    input.addEventListener("keydown", function(e){
+        if(e.key==="Enter"){
+            searchMarketplace();
+        }
     });
 });
 </script>
