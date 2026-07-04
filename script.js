@@ -136,25 +136,44 @@ async function isFavorite(itemId) {
     // LOAD HOME ITEMS
     // ==========================
     async function loadHomeItems() {
-        const grid = document.querySelector(".product-grid");
-        if (!grid) return;
+    const grid = document.querySelector(".product-grid");
+    if (!grid) return;
 
-        const { data } = await client
-            .from("items")
-            .select("*")
-            .order("created_at", { ascending: false });
+    const { data } = await client
+        .from("items")
+        .select("*")
+        .order("created_at", { ascending: false });
 
-        grid.innerHTML = "";
+    grid.innerHTML = "";
 
-        data.forEach(item => {
-            grid.innerHTML += `
-                <div class="card">
-                    <img src="${item.image_url}">
-                    <h3>${item.title}</h3>
-                    <p>K${item.price}</p>
-                    <button onclick="openItem('${item.id}')">View</button>
+    for (const item of data) {
+
+        const saved = await isFavorite(item.id);
+
+        grid.innerHTML += `
+            <div class="card">
+
+                <img src="${item.image_url}" alt="${item.title}">
+
+                <h3>${item.title}</h3>
+
+                <p>K${item.price}</p>
+
+                <div class="card-buttons">
+
+                    <button onclick="openItem('${item.id}')">
+                        View
+                    </button>
+
+                    <button class="favorite-btn"
+                        onclick="toggleFavorite(${item.id})">
+                        ${saved ? "❤️ Saved" : "🤍 Save"}
+                    </button>
+
                 </div>
-            `;
+
+            </div>
+        `;
         });
     }
 
@@ -168,30 +187,51 @@ async function isFavorite(itemId) {
         const searchBtn = document.getElementById("searchBtn");
 
         async function loadMarket() {
-            let query = client.from("items").select("*");
 
-            if (category?.value) {
-                query = query.eq("category", category.value);
-            }
+    let query = client.from("items").select("*");
 
-            if (searchInput?.value) {
-                query = query.ilike("title", `%${searchInput.value}%`);
-            }
+    if (category?.value) {
+        query = query.eq("category", category.value);
+    }
 
-            const { data } = await query;
+    if (searchInput?.value) {
+        query = query.ilike("title", `%${searchInput.value}%`);
+    }
 
-            grid.innerHTML = "";
+    const { data } = await query;
 
-            data.forEach(item => {
-                grid.innerHTML += `
-                    <div class="card">
-                        <img src="${item.image_url}">
-                        <h3>${item.title}</h3>
-                        <p>K${item.price}</p>
-                        <button onclick="openItem('${item.id}')">View</button>
-                    </div>
-                `;
-            });
+    grid.innerHTML = "";
+
+    for (const item of data) {
+
+        const saved = await isFavorite(item.id);
+
+        grid.innerHTML += `
+            <div class="card">
+
+                <img src="${item.image_url}" alt="${item.title}">
+
+                <h3>${item.title}</h3>
+
+                <p>K${item.price}</p>
+
+                <div class="card-buttons">
+
+                    <button onclick="openItem('${item.id}')">
+                        View
+                    </button>
+
+                    <button class="favorite-btn"
+                        onclick="toggleFavorite(${item.id})">
+                        ${saved ? "❤️ Saved" : "🤍 Save"}
+                    </button>
+
+                </div>
+
+            </div>
+        `;
+    }
+        }
         }
 
         searchBtn?.addEventListener("click", loadMarket);
@@ -223,17 +263,31 @@ async function isFavorite(itemId) {
                 return;
             }
 
-            box.innerHTML = `
-                <img src="${data.image_url}" style="max-width:100%">
-                <h2>${data.title}</h2>
-                <p>K${data.price}</p>
-                <p>${data.description}</p>
-                <a target="_blank"
-                   href="https://wa.me/${data.contact_number}?text=Hi I'm interested in ${encodeURIComponent(data.title)}"
-                   style="background:#25D366;color:white;padding:10px;display:inline-block;border-radius:6px;">
-                   Contact Seller
-                </a>
-            `;
+            const saved = await isFavorite(data.id);
+
+box.innerHTML = `
+    <img src="${data.image_url}" style="max-width:100%">
+
+    <h2>${data.title}</h2>
+
+    <p><strong>K${data.price}</strong></p>
+
+    <p>${data.description}</p>
+
+    <button
+        class="favorite-btn"
+        onclick="toggleFavorite(${data.id})">
+        ${saved ? "❤️ Saved" : "🤍 Save"}
+    </button>
+
+    <br><br>
+
+    <a target="_blank"
+       href="https://wa.me/${data.contact_number}?text=Hi I'm interested in ${encodeURIComponent(data.title)}"
+       style="background:#25D366;color:white;padding:12px 18px;border-radius:8px;text-decoration:none;">
+       Contact Seller
+    </a>
+`;
         }
 
         loadItem();
