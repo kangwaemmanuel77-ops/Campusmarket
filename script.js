@@ -49,56 +49,64 @@ function startApp() {
     // FAVORITES SYSTEM
     // ==========================
     window.toggleFavorite = async function(itemId) {
-        const { data: { session } } = await client.auth.getSession();
+        try {
+            const { data: { session } } = await client.auth.getSession();
 
-        if (!session) {
-            alert("Please log in to save favorites.");
-            return;
-        }
+            if (!session) {
+                alert("Please log in to save favorites.");
+                return;
+            }
 
-        const userId = session.user.id;
+            const userId = session.user.id;
 
-        const { data: existing } = await client
-            .from("favorites")
-            .select("id")
-            .eq("user_id", userId)
-            .eq("item_id", itemId)
-            .maybeSingle();
-
-        if (existing) {
-            await client
+            const { data: existing } = await client
                 .from("favorites")
-                .delete()
-                .eq("id", existing.id);
+                .select("id")
+                .eq("user_id", userId)
+                .eq("item_id", itemId)
+                .maybeSingle();
 
-            alert("💔 Removed from favorites");
-        } else {
-            await client
-                .from("favorites")
-                .insert({
-                    user_id: userId,
-                    item_id: itemId
-                });
+            if (existing) {
+                await client
+                    .from("favorites")
+                    .delete()
+                    .eq("id", existing.id);
 
-            alert("❤️ Added to favorites");
+                alert("💔 Removed from favorites");
+            } else {
+                await client
+                    .from("favorites")
+                    .insert({
+                        user_id: userId,
+                        item_id: itemId
+                    });
+
+                alert("❤️ Added to favorites");
+            }
+
+            location.reload();
+        } catch (err) {
+            console.error("Error toggling favorite:", err);
         }
-
-        location.reload();
     };
 
     async function isFavorite(itemId) {
-        const { data: { session } } = await client.auth.getSession();
+        try {
+            const { data: { session } } = await client.auth.getSession();
+            if (!session) return false;
 
-        if (!session) return false;
+            const { data } = await client
+                .from("favorites")
+                .select("id")
+                .eq("user_id", session.user.id)
+                .eq("item_id", itemId)
+                .maybeSingle();
 
-        const { data } = await client
-            .from("favorites")
-            .select("id")
-            .eq("user_id", session.user.id)
-            .eq("item_id", itemId)
-            .maybeSingle();
-
-        return !!data;
+            return !!data;
+        } catch (err) {
+            console.error("Error checking favorite status:", err);
+            return false; // Fail silently so items still load
+        }
     }
 
     // ==========================
@@ -138,29 +146,39 @@ function startApp() {
         const grid = document.querySelector(".product-grid");
         if (!grid) return;
 
-        const { data } = await client
-            .from("items")
-            .select("*")
-            .order("created_at", { ascending: false });
+        try {
+            const { data, error } = await client
+                .from("items")
+                .select("*")
+                .order("created_at", { ascending: false });
 
-        grid.innerHTML = "";
+            if (error) throw error;
+            if (!data) return;
 
-        for (const item of data) {
-            const saved = await isFavorite(item.id);
+            grid.innerHTML = "";
 
-            grid.innerHTML += `
-                <div class="card">
-                    <img src="${item.image_url}" alt="${item.title}">
-                    <h3>${item.title}</h3>
-                    <p>K${item.price}</p>
-                    <div class="card-buttons">
-                        <button onclick="openItem('${item.id}')">View</button>
-                        <button class="favorite-btn" onclick="toggleFavorite(${item.id})">
-                            ${saved ? "❤️ Saved" : "🤍 Save"}
-                        </button>
+            for (const item of data) {
+                // If item ID is missing or bad, skip it cleanly instead of crashing everything
+                if (!item.id) continue; 
+                
+                const saved = await isFavorite(item.id);
+
+                grid.innerHTML += `
+                    <div class="card">
+                        <img src="${item.image_url || ''}" alt="${item.title || 'Item'}">
+                        <h3>${item.title || 'No Title'}</h3>
+                        <p>K${item.price || '0'}</p>
+                        <div class="card-buttons">
+                            <button onclick="openItem('${item.id}')">View</button>
+                            <button class="favorite-btn" onclick="toggleFavorite('${item.id}')">
+                                ${saved ? "❤️ Saved" : "🤍 Save"}
+                            </button>
+                        </div>
                     </div>
-                </div>
-            `;
+                `;
+            }
+        } catch (err) {
+            console.error("Error loading home items:", err);
         }
     }
 
@@ -174,36 +192,47 @@ function startApp() {
         const searchBtn = document.getElementById("searchBtn");
 
         async function loadMarket() {
-            let query = client.from("items").select("*");
+            if (!grid) return;
 
-            if (category?.value) {
-                query = query.eq("category", category.value);
-            }
+            try {
+                let query = client.from("items").select("*");
 
-            if (searchInput?.value) {
-                query = query.ilike("title", `%${searchInput.value}%`);
-            }
+                if (category?.value) {
+                    query = query.eq("category", category.value);
+                }
 
-            const { data } = await query;
+                if (searchInput?.value) {
+                    query = query.ilike("title", `%${searchInput.value}%`);
+                }
 
-            grid.innerHTML = "";
+                const { data, error } = await query;
 
-            for (const item of data) {
-                const saved = await isFavorite(item.id);
+                if (error) throw error;
+                if (!data) return;
 
-                grid.innerHTML += `
-                    <div class="card">
-                        <img src="${item.image_url}" alt="${item.title}">
-                        <h3>${item.title}</h3>
-                        <p>K${item.price}</p>
-                        <div class="card-buttons">
-                            <button onclick="openItem('${item.id}')">View</button>
-                            <button class="favorite-btn" onclick="toggleFavorite(${item.id})">
-                                ${saved ? "❤️ Saved" : "🤍 Save"}
-                            </button>
+                grid.innerHTML = "";
+
+                for (const item of data) {
+                    if (!item.id) continue;
+
+                    const saved = await isFavorite(item.id);
+
+                    grid.innerHTML += `
+                        <div class="card">
+                            <img src="${item.image_url || ''}" alt="${item.title || 'Item'}">
+                            <h3>${item.title || 'No Title'}</h3>
+                            <p>K${item.price || '0'}</p>
+                            <div class="card-buttons">
+                                <button onclick="openItem('${item.id}')">View</button>
+                                <button class="favorite-btn" onclick="toggleFavorite('${item.id}')">
+                                    ${saved ? "❤️ Saved" : "🤍 Save"}
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                `;
+                    `;
+                }
+            } catch (err) {
+                console.error("Error loading marketplace items:", err);
             }
         }
 
@@ -223,36 +252,46 @@ function startApp() {
         const box = document.getElementById("itemBox");
 
         async function loadItem() {
-            const id = new URLSearchParams(window.location.search).get("id");
+            if (!box) return;
 
-            const { data } = await client
-                .from("items")
-                .select("*")
-                .eq("id", id)
-                .single();
+            try {
+                const id = new URLSearchParams(window.location.search).get("id");
+                if (!id) {
+                    box.innerHTML = "No item selected.";
+                    return;
+                }
 
-            if (!data) {
-                box.innerHTML = "Item not found";
-                return;
+                const { data, error } = await client
+                    .from("items")
+                    .select("*")
+                    .eq("id", id)
+                    .single();
+
+                if (error || !data) {
+                    box.innerHTML = "Item not found";
+                    return;
+                }
+
+                const saved = await isFavorite(data.id);
+
+                box.innerHTML = `
+                    <img src="${data.image_url || ''}" style="max-width:100%">
+                    <h2>${data.title || 'No Title'}</h2>
+                    <p><strong>K${data.price || '0'}</strong></p>
+                    <p>${data.description || 'No description provided.'}</p>
+                    <button class="favorite-btn" onclick="toggleFavorite('${data.id}')">
+                        ${saved ? "❤️ Saved" : "🤍 Save"}
+                    </button>
+                    <br><br>
+                    <a target="_blank"
+                       href="https://wa.me/${data.contact_number || ''}?text=Hi I'm interested in ${encodeURIComponent(data.title || 'this item')}"
+                       style="background:#25D366;color:white;padding:12px 18px;border-radius:8px;text-decoration:none;display:inline-block;">
+                       Contact Seller
+                    </a>
+                `;
+            } catch (err) {
+                console.error("Error loading single item page:", err);
             }
-
-            const saved = await isFavorite(data.id);
-
-            box.innerHTML = `
-                <img src="${data.image_url}" style="max-width:100%">
-                <h2>${data.title}</h2>
-                <p><strong>K${data.price}</strong></p>
-                <p>${data.description}</p>
-                <button class="favorite-btn" onclick="toggleFavorite(${data.id})">
-                    ${saved ? "❤️ Saved" : "🤍 Save"}
-                </button>
-                <br><br>
-                <a target="_blank"
-                   href="https://wa.me/${data.contact_number}?text=Hi I'm interested in ${encodeURIComponent(data.title)}"
-                   style="background:#25D366;color:white;padding:12px 18px;border-radius:8px;text-decoration:none;">
-                   Contact Seller
-                </a>
-            `;
         }
 
         loadItem();
@@ -272,5 +311,87 @@ function startApp() {
 
             if (!user) {
                 alert("Login required to sell items");
-                window.location.
+                window.location.href = "login.html";
+            }
+        })();
+
+        form?.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            if (!user) return;
+
+            if (msg) msg.innerText = "Uploading...";
+
+            try {
+                const file = document.getElementById("image").files[0];
+                const title = document.getElementById("title").value;
+                const price = document.getElementById("price").value;
+                const category = document.getElementById("category").value;
+                const description = document.getElementById("description").value;
+                const contact = document.getElementById("contact").value;
+
+                if (!file) {
+                    if (msg) msg.innerText = "Please select an image.";
+                    return;
+                }
+
+                const fileName = Date.now() + file.name;
+
+                await client.storage
+                    .from("item-images")
+                    .upload("products/" + fileName, file);
+
+                const { data: urlData } = client.storage
+                    .from("item-images")
+                    .getPublicUrl("products/" + fileName);
+
+                await client.from("items").insert({
+                    title,
+                    price,
+                    category,
+                    description,
+                    contact_number: contact,
+                    image_url: urlData.publicUrl,
+                    user_id: user.id
+                });
+
+                if (msg) msg.innerText = "Item posted successfully!";
+                form.reset();
+            } catch (err) {
+                console.error("Upload error:", err);
+                if (msg) msg.innerText = "Failed to post item.";
+            }
+        });
+    }
+
+    // ==========================
+    // AUTH (UNCHANGED BUT STABLE)
+    // ==========================
+    window.signup = async function () {
+        const msg = document.getElementById("msg");
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+
+        const { error } = await client.auth.signUp({ email, password });
+        if (msg) msg.innerText = error ? error.message : "Account created! Check email.";
+    };
+
+    window.login = async function () {
+        const msg = document.getElementById("msg");
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+
+        const { error } = await client.auth.signInWithPassword({ email, password });
+
+        if (error) {
+            if (msg) msg.innerText = error.message;
+        } else {
+            window.location.href = "profile.html";
+        }
+    };
+
+    window.logout = async function () {
+        await client.auth.signOut();
+        window.location.href = "index.html";
+    };
+}
 
