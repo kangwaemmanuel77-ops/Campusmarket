@@ -46,6 +46,63 @@ function startApp() {
     const page = getPage();
 
     // ==========================
+// FAVORITES SYSTEM
+// ==========================
+
+window.toggleFavorite = async function(itemId) {
+    const { data: { session } } = await client.auth.getSession();
+
+    if (!session) {
+        alert("Please log in to save favorites.");
+        return;
+    }
+
+    const userId = session.user.id;
+
+    const { data: existing } = await client
+        .from("favorites")
+        .select("id")
+        .eq("user_id", userId)
+        .eq("item_id", itemId)
+        .maybeSingle();
+
+    if (existing) {
+        await client
+            .from("favorites")
+            .delete()
+            .eq("id", existing.id);
+
+        alert("💔 Removed from favorites");
+    } else {
+        await client
+            .from("favorites")
+            .insert({
+                user_id: userId,
+                item_id: itemId
+            });
+
+        alert("❤️ Added to favorites");
+    }
+
+    location.reload();
+};
+
+async function isFavorite(itemId) {
+    const { data: { session } } = await client.auth.getSession();
+
+    if (!session) return false;
+
+    const { data } = await client
+        .from("favorites")
+        .select("id")
+        .eq("user_id", session.user.id)
+        .eq("item_id", itemId)
+        .maybeSingle();
+
+    return !!data;
+}
+
+    // ==========================
     // GLOBAL FUNCTION
     // ==========================
     window.openItem = (id) => {
