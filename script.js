@@ -45,6 +45,79 @@ async function getUserSafe() {
 function startApp() {
     const page = getPage();
 
+        // ==========================
+    // PROFILE / SAVED ITEMS PAGE
+    // ==========================
+    if (page === "profile.html") {
+        const savedGrid = document.getElementById("savedGrid");
+        
+        async function loadSavedItems() {
+            if (!savedGrid) return;
+            
+            try {
+                // 1. Make sure the user is logged in
+                const user = await getUserSafe();
+                if (!user) {
+                    savedGrid.innerHTML = `<p>Please <a href="login.html">login</a> to view your saved items.</p>`;
+                    return;
+                }
+
+                // 2. Fetch all favorited item IDs for this user
+                const { data: favData, error: favError } = await client
+                    .from("favorites")
+                    .select("item_id")
+                    .eq("user_id", user.id);
+
+                if (favError) throw favError;
+
+                // If they haven't saved anything yet
+                if (!favData || favData.length === 0) {
+                    savedGrid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #666;">You haven't saved any items yet. 🤍</p>`;
+                    return;
+                }
+
+                // Extract just the IDs into a clean array: [1, 2, 3]
+                const itemIds = favData.map(fav => fav.item_id);
+
+                // 3. Fetch the actual item details for those IDs
+                const { data: items, error: itemsError } = await client
+                    .from("items")
+                    .select("*")
+                    .in("id", itemIds); // ".in" checks if the id matches any in our array
+
+                if (itemsError) throw itemsError;
+
+                savedGrid.innerHTML = "";
+
+                // 4. Render the saved items to the grid
+                for (const item of items) {
+                    if (!item.id) continue;
+
+                    // Since they are on the saved page, we already know these are favorited (❤️)
+                    savedGrid.innerHTML += `
+                        <div class="card">
+                            <img src="${item.image_url || ''}" alt="${item.title || 'Item'}">
+                            <h3>${item.title || 'No Title'}</h3>
+                            <p>K${item.price || '0'}</p>
+                            <div class="card-buttons">
+                                <button onclick="openItem('${item.id}')">View</button>
+                                <button class="favorite-btn" onclick="toggleFavorite('${item.id}')">
+                                    ❤️ Saved
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }
+            } catch (err) {
+                console.error("Error loading saved items:", err);
+                savedGrid.innerHTML = "<p>Error loading saved items.</p>";
+            }
+        }
+
+        loadSavedItems();
+    }
+
+
     // ==========================
     // FAVORITES SYSTEM
     // ==========================
