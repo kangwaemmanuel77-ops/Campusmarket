@@ -18,53 +18,40 @@
 <body>
 
 <header>
-
     <div class="logo">
         <i class="fa-solid fa-store"></i>
         Campus Market
     </div>
 
     <nav>
-
         <a href="index.html">
             <i class="fa-solid fa-house"></i> Home
         </a>
-
         <a href="marketplace.html">
             <i class="fa-solid fa-shop"></i> Marketplace
         </a>
-
         <a href="sell.html">
             <i class="fa-solid fa-plus"></i> Sell
         </a>
-
         <a href="profile.html" class="active">
             <i class="fa-solid fa-user"></i> Profile
         </a>
-
     </nav>
-
 </header>
 
 <section class="profile-container">
-
     <div class="profile-box">
-
         <div class="profile-header">
-
             <div class="avatar"
                  onclick="document.getElementById('avatarInput').click()"
                  style="cursor:pointer;position:relative;overflow:hidden;">
-
                 <i class="fa-solid fa-user" id="defaultAvatarIcon"></i>
-
                 <img
                     id="profileDisplayImg"
                     src=""
                     alt="Profile Picture"
                     style="display:none;width:100%;height:100%;object-fit:cover;border-radius:50%;"
                 >
-
             </div>
 
             <input
@@ -75,80 +62,62 @@
             >
 
             <div>
-
-                <h2 id="userEmail">
-                    Loading...
-                </h2>
-
+                <h2 id="userEmail">Loading...</h2>
                 <p>University of Zambia</p>
-
             </div>
-
         </div>
 
         <div class="profile-stats">
-
             <div>
                 <h3>-</h3>
                 <p>Listings</p>
             </div>
-
             <div>
                 <h3>-</h3>
                 <p>Sales</p>
             </div>
-
             <div>
                 <h3>-</h3>
                 <p>Rating</p>
             </div>
-
         </div>
 
-        <button
-            class="logout-btn"
-            onclick="logout()">
-
+        <button class="logout-btn" onclick="logout()">
             <i class="fa-solid fa-right-from-bracket"></i>
             Logout
-
         </button>
-
     </div>
-
 </section>
 
+<!-- Current User Listings -->
 <section class="products">
-
     <h2>My Listings</h2>
-
-    <p id="profileMsg"
-       style="text-align:center;margin-bottom:15px;font-weight:500;">
-    </p>
-
+    <p id="profileMsg" style="text-align:center;margin-bottom:15px;font-weight:500;"></p>
     <div class="product-grid" id="myItemsGrid">
-
         <p style="grid-column:1/-1;text-align:center;color:#888;">
             Loading your listings...
         </p>
-
     </div>
+</section>
 
+<!-- Saved / Bookmarked Items Section -->
+<section class="products" style="margin-top: 40px; border-top: 1px solid #eee; padding-top: 40px;">
+    <h2>Saved Items 🤍</h2>
+    <div class="product-grid" id="savedGrid">
+        <p style="grid-column:1/-1;text-align:center;color:#888;">
+            Loading your saved items...
+        </p>
+    </div>
 </section>
 
 <footer>
-
-    <p>
-        © 2026 Campus Market. All Rights Reserved.
-    </p>
-
+    <p>© 2026 Campus Market. All Rights Reserved.</p>
     <p style="font-size:.75rem;color:#6b7280;margin-top:4px;">
         Engineered &amp; Maintained by
         <strong style="color:var(--accent-emerald);">
             EMMANUEL ELECTRONICS LTD.
         </strong>
     </p>
-
 </footer>
 
 <!-- Supabase -->
@@ -159,3 +128,4 @@
 
 </body>
 </html>
+
