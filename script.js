@@ -45,77 +45,115 @@ async function getUserSafe() {
 function startApp() {
     const page = getPage();
 
-        // ==========================
-    // PROFILE / SAVED ITEMS PAGE
+            // ==========================
+    // PROFILE PAGE PROCESSING
     // ==========================
     if (page === "profile.html") {
+        const myItemsGrid = document.getElementById("myItemsGrid");
         const savedGrid = document.getElementById("savedGrid");
-        
-        async function loadSavedItems() {
-            if (!savedGrid) return;
-            
+        const userEmailHeader = document.getElementById("userEmail");
+        const listingsCount = document.getElementById("listingsCount"); // Clean direct selector
+
+        async function loadProfileData() {
             try {
-                // 1. Make sure the user is logged in
                 const user = await getUserSafe();
                 if (!user) {
-                    savedGrid.innerHTML = `<p>Please <a href="login.html">login</a> to view your saved items.</p>`;
+                    alert("Please log in to see your profile.");
+                    window.location.href = "login.html";
                     return;
                 }
 
-                // 2. Fetch all favorited item IDs for this user
-                const { data: favData, error: favError } = await client
-                    .from("favorites")
-                    .select("item_id")
-                    .eq("user_id", user.id);
+                // Show email
+                if (userEmailHeader) userEmailHeader.innerText = user.email;
 
-                if (favError) throw favError;
-
-                // If they haven't saved anything yet
-                if (!favData || favData.length === 0) {
-                    savedGrid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #666;">You haven't saved any items yet. 🤍</p>`;
-                    return;
-                }
-
-                // Extract just the IDs into a clean array: [1, 2, 3]
-                const itemIds = favData.map(fav => fav.item_id);
-
-                // 3. Fetch the actual item details for those IDs
-                const { data: items, error: itemsError } = await client
+                // 1. FETCH USER'S OWN LISTINGS
+                const { data: myItems, error: myItemsError } = await client
                     .from("items")
                     .select("*")
-                    .in("id", itemIds); // ".in" checks if the id matches any in our array
+                    .eq("user_id", user.id)
+                    .order("created_at", { ascending: false });
 
-                if (itemsError) throw itemsError;
+                if (myItemsError) throw myItemsError;
 
-                savedGrid.innerHTML = "";
-
-                // 4. Render the saved items to the grid
-                for (const item of items) {
-                    if (!item.id) continue;
-
-                    // Since they are on the saved page, we already know these are favorited (❤️)
-                    savedGrid.innerHTML += `
-                        <div class="card">
-                            <img src="${item.image_url || ''}" alt="${item.title || 'Item'}">
-                            <h3>${item.title || 'No Title'}</h3>
-                            <p>K${item.price || '0'}</p>
-                            <div class="card-buttons">
-                                <button onclick="openItem('${item.id}')">View</button>
-                                <button class="favorite-btn" onclick="toggleFavorite('${item.id}')">
-                                    ❤️ Saved
-                                </button>
-                            </div>
-                        </div>
-                    `;
+                // Live update the posted listings count!
+                if (listingsCount) {
+                    listingsCount.innerText = myItems ? myItems.length : "0";
                 }
+
+                // Render user's items
+                if (myItemsGrid) {
+                    myItemsGrid.innerHTML = "";
+                    if (!myItems || myItems.length === 0) {
+                        myItemsGrid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #888;">You haven't listed any items for sale yet.</p>`;
+                    } else {
+                        myItems.forEach(item => {
+                            myItemsGrid.innerHTML += `
+                                <div class="card">
+                                    <img src="${item.image_url || ''}" alt="${item.title}">
+                                    <h3>${item.title || 'Untitled'}</h3>
+                                    <p>K${item.price || '0'}</p>
+                                    <div class="card-buttons">
+                                        <button onclick="openItem('${item.id}')">View</button>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                    }
+                }
+
+                // 2. FETCH SAVED ITEMS 
+                if (savedGrid) {
+                    const { data: favData, error: favError } = await client
+                        .from("favorites")
+                        .select("item_id")
+                        .eq("user_id", user.id);
+
+                    if (favError) throw favError;
+
+                    if (!favData || favData.length === 0) {
+                        savedGrid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #888;">You haven't saved any items yet. 🤍</p>`;
+                        return;
+                    }
+
+                    const itemIds = favData.map(fav => fav.item_id);
+
+                    const { data: savedItems, error: savedItemsError } = await client
+                        .from("items")
+                        .select("*")
+                        .in("id", itemIds);
+
+                    if (savedItemsError) throw savedItemsError;
+
+                    savedGrid.innerHTML = "";
+                    if (!savedItems || savedItems.length === 0) {
+                        savedGrid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #888;">Saved items are no longer available.</p>`;
+                    } else {
+                        for (const item of savedItems) {
+                            savedGrid.innerHTML += `
+                                <div class="card">
+                                    <img src="${item.image_url || ''}" alt="${item.title}">
+                                    <h3>${item.title || 'Untitled'}</h3>
+                                    <p>K${item.price || '0'}</p>
+                                    <div class="card-buttons">
+                                        <button onclick="openItem('${item.id}')">View</button>
+                                        <button class="favorite-btn" onclick="toggleFavorite('${item.id}')">
+                                            ❤️ Saved
+                                        </button>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    }
+                }
+
             } catch (err) {
-                console.error("Error loading saved items:", err);
-                savedGrid.innerHTML = "<p>Error loading saved items.</p>";
+                console.error("Error setting up profile components:", err);
             }
         }
 
-        loadSavedItems();
+        loadProfileData();
     }
+
 
 
     // ==========================
