@@ -134,40 +134,56 @@ if (myItemsGrid) {
         myItemsGrid.insertAdjacentHTML('beforebegin', tabsHTML);
     }
 
-    // 2. Render the actual listing cards
-    myItemsGrid.innerHTML = "";
-    if (!myItems || myItems.length === 0) {
-        myItemsGrid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #888; padding: 20px;">You haven't listed any items for sale yet.</p>`;
-    } else {
-        myItems.forEach(item => {
-            myItemsGrid.innerHTML += `
-                <div class="card" id="item-card-${item.id}" style="background: #1e1e2e; border: 1px solid #2e303f; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                    <img src="${item.image_url || ''}" alt="${item.title}" style="width: 100%; height: 140px; object-fit: cover;">
-                    <div style="padding: 12px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; gap: 10px;">
-                        <div>
-                            <h3 style="margin: 0 0 4px 0; font-size: 1rem; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.title || 'Untitled'}</h3>
-                            <p style="margin: 0; font-size: 0.95rem; color: #a6adc8; font-weight: bold;">K${item.price || '0'}</p>
-                        </div>
-                        
-                        <div style="display: flex; flex-direction: column; gap: 8px;">
-                            <button onclick="openItem('${item.id}')" style="width: 100%; padding: 8px; background: #313244; color: #cdd6f4; border: 1px solid #45475a; border-radius: 6px; font-size: 0.85rem; font-weight: 600; cursor: pointer;">
-                                View Listing
-                            </button>
-                            <div style="display: flex; gap: 8px; width: 100%;">
-                                <button onclick="openEditModal('${item.id}', '${item.title.replace(/'/g, "\\'")}', ${item.price}, '${item.image_url || ''}')" style="flex: 1; padding: 8px; background: rgba(79, 70, 229, 0.15); color: #818cf8; border: 1px solid rgba(79, 70, 229, 0.3); border-radius: 6px; font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer;">
-                                    <i class="fa-solid fa-pen" style="font-size: 0.75rem;"></i> Edit
-                                </button>
-                                <button onclick="deleteItem('${item.id}')" style="flex: 1; padding: 8px; background: rgba(220, 38, 38, 0.15); color: #f87171; border: 1px solid rgba(220, 38, 38, 0.3); border-radius: 6px; font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer;">
-                                    <i class="fa-solid fa-trash" style="font-size: 0.75rem;"></i> Delete
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        });
+    // ==========================================
+// PROFILE TAB TOGGLE SYSTEM (LISTINGS, SAVED, CHATS)
+// ==========================================
+window.switchProfileTab = function(tabName) {
+    const tabListings = document.getElementById('tab-listings');
+    const tabSaved = document.getElementById('tab-saved');
+    const tabChats = document.getElementById('tab-chats');
+    
+    const gridListings = document.getElementById('myItemsGrid');
+    const gridSaved = document.getElementById('savedGrid');
+    const containerChats = document.getElementById('chatsContainer') || document.getElementById('inAppChatContainer'); // Handles whichever chat container id you have!
+
+    // Reset styles helper
+    const resetTab = (tab) => {
+        if (tab) {
+            tab.style.color = '#a6adc8';
+            tab.style.borderBottom = 'none';
+        }
+    };
+
+    // Apply Active Tab Style helper
+    const activeTab = (tab) => {
+        if (tab) {
+            tab.style.color = '#fff';
+            tab.style.borderBottom = '2px solid #4f46e5';
+        }
+    };
+
+    // Hide everything first
+    if (gridListings) gridListings.style.display = 'none';
+    if (gridSaved) gridSaved.style.display = 'none';
+    if (containerChats) containerChats.style.display = 'none';
+    
+    resetTab(tabListings);
+    resetTab(tabSaved);
+    resetTab(tabChats);
+
+    // Show the selected one
+    if (tabName === 'listings') {
+        activeTab(tabListings);
+        if (gridListings) gridListings.style.display = 'grid';
+    } else if (tabName === 'saved') {
+        activeTab(tabSaved);
+        if (gridSaved) gridSaved.style.display = 'grid';
+    } else if (tabName === 'chats') {
+        activeTab(tabChats);
+        if (containerChats) containerChats.style.display = 'block';
     }
-}
+};
+
 
 
 
@@ -1228,40 +1244,52 @@ document.getElementById('editForm').addEventListener('submit', async function(e)
     }
 });
 
-// ==========================================
-// PROFILE TAB TOGGLE SYSTEM (JS ONLY)
+//// ==========================================
+// PROFILE TAB TOGGLE SYSTEM (LISTINGS, SAVED, CHATS)
 // ==========================================
 window.switchProfileTab = function(tabName) {
     const tabListings = document.getElementById('tab-listings');
     const tabSaved = document.getElementById('tab-saved');
+    const tabChats = document.getElementById('tab-chats');
+    
     const gridListings = document.getElementById('myItemsGrid');
     const gridSaved = document.getElementById('savedGrid');
+    const containerChats = document.getElementById('chatsContainer') || document.getElementById('inAppChatContainer'); // Handles whichever chat container id you have!
 
+    // Reset styles helper
+    const resetTab = (tab) => {
+        if (tab) {
+            tab.style.color = '#a6adc8';
+            tab.style.borderBottom = 'none';
+        }
+    };
+
+    // Apply Active Tab Style helper
+    const activeTab = (tab) => {
+        if (tab) {
+            tab.style.color = '#fff';
+            tab.style.borderBottom = '2px solid #4f46e5';
+        }
+    };
+
+    // Hide everything first
+    if (gridListings) gridListings.style.display = 'none';
+    if (gridSaved) gridSaved.style.display = 'none';
+    if (containerChats) containerChats.style.display = 'none';
+    
+    resetTab(tabListings);
+    resetTab(tabSaved);
+    resetTab(tabChats);
+
+    // Show the selected one
     if (tabName === 'listings') {
-        // Highlight Listings Tab
-        if (tabListings) {
-            tabListings.style.color = '#fff';
-            tabListings.style.borderBottom = '2px solid #4f46e5';
-        }
-        if (tabSaved) {
-            tabSaved.style.color = '#a6adc8';
-            tabSaved.style.borderBottom = 'none';
-        }
-        // Show listings, hide saved
+        activeTab(tabListings);
         if (gridListings) gridListings.style.display = 'grid';
-        if (gridSaved) gridSaved.style.display = 'none';
     } else if (tabName === 'saved') {
-        // Highlight Saved Tab
-        if (tabSaved) {
-            tabSaved.style.color = '#fff';
-            tabSaved.style.borderBottom = '2px solid #4f46e5';
-        }
-        if (tabListings) {
-            tabListings.style.color = '#a6adc8';
-            tabListings.style.borderBottom = 'none';
-        }
-        // Show saved, hide listings
-        if (gridListings) gridListings.style.display = 'none';
+        activeTab(tabSaved);
         if (gridSaved) gridSaved.style.display = 'grid';
+    } else if (tabName === 'chats') {
+        activeTab(tabChats);
+        if (containerChats) containerChats.style.display = 'block';
     }
 };
