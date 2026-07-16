@@ -5,13 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile - Campus Market</title>
 
-    <!-- Main CSS -->
     <link rel="stylesheet" href="style.css">
 
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
 
@@ -63,7 +60,9 @@
 
             <div>
                 <h2 id="userEmail">Loading...</h2>
-                <p>University of Zambia</p>
+                <div id="userRoleBadge" style="margin-top: 6px; display: flex; flex-direction: column; gap: 4px;">
+                    <p style="margin: 0; font-size: 0.9rem; color: #666;">University of Zambia</p>
+                </div>
             </div>
         </div>
 
@@ -89,7 +88,6 @@
     </div>
 </section>
 
-<!-- Current User Listings -->
 <section class="products">
     <h2>My Listings</h2>
     <p id="profileMsg" style="text-align:center;margin-bottom:15px;font-weight:500;"></p>
@@ -100,7 +98,6 @@
     </div>
 </section>
 
-<!-- Saved / Bookmarked Items Section -->
 <section class="products" style="margin-top: 40px; border-top: 1px solid #eee; padding-top: 40px;">
     <h2>Saved Items 🤍</h2>
     <div class="product-grid" id="savedGrid">
@@ -120,12 +117,9 @@
     </p>
 </footer>
 
-<!-- Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<!-- Main JS -->
 <script src="script.js"></script>
 
 </body>
 </html>
-
