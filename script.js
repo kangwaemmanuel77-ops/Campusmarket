@@ -120,23 +120,30 @@ function startApp() {
 if (myItemsGrid) {
     myItemsGrid.innerHTML = "";
     if (!myItems || myItems.length === 0) {
-        myItemsGrid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #888;">You haven't listed any items for sale yet.</p>`;
+        myItemsGrid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #888; padding: 20px;">You haven't listed any items for sale yet.</p>`;
     } else {
         myItems.forEach(item => {
             myItemsGrid.innerHTML += `
-                <div class="card" id="item-card-${item.id}">
-                    <img src="${item.image_url || ''}" alt="${item.title}">
-                    <h3>${item.title || 'Untitled'}</h3>
-                    <p>K${item.price || '0'}</p>
-                    <div class="card-buttons" style="display:flex; flex-direction:column; gap:6px; padding:10px;">
-                        <button onclick="openItem('${item.id}')" style="width:100%;">View Listing</button>
-                        <div style="display:flex; gap:6px; width:100%;">
-                            <button onclick="openEditModal('${item.id}', '${item.title.replace(/'/g, "\\'")}', ${item.price}, '${item.image_url || ''}')" style="background:#4f46e5; color:white; flex:1; font-size:0.85rem; border:none; padding:8px; border-radius:6px; font-weight:600;">
-                                <i class="fa-solid fa-pen"></i> Edit
+                <div class="card" id="item-card-${item.id}" style="background: #1e1e2e; border: 1px solid #2e303f; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column;">
+                    <img src="${item.image_url || ''}" alt="${item.title}" style="width: 100%; height: 140px; object-fit: cover;">
+                    <div style="padding: 12px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <h3 style="margin: 0 0 4px 0; font-size: 1rem; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.title || 'Untitled'}</h3>
+                            <p style="margin: 0 0 12px 0; font-size: 0.95rem; color: #a6adc8; font-weight: bold;">K${item.price || '0'}</p>
+                        </div>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <button onclick="openItem('${item.id}')" style="width: 100%; padding: 8px; background: #313244; color: #cdd6f4; border: 1px solid #45475a; border-radius: 6px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: 0.2s;">
+                                View Listing
                             </button>
-                            <button onclick="deleteItem('${item.id}')" style="background:#dc2626; color:white; flex:1; font-size:0.85rem; border:none; padding:8px; border-radius:6px; font-weight:600;">
-                                <i class="fa-solid fa-trash"></i> Delete
-                            </button>
+                            <div style="display: flex; gap: 8px; width: 100%;">
+                                <button onclick="openEditModal('${item.id}', '${item.title.replace(/'/g, "\\'")}', ${item.price}, '${item.image_url || ''}')" style="flex: 1; padding: 8px; background: rgba(79, 70, 229, 0.15); color: #818cf8; border: 1px solid rgba(79, 70, 229, 0.3); border-radius: 6px; font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer;">
+                                    <i class="fa-solid fa-pen" style="font-size: 0.75rem;"></i> Edit
+                                </button>
+                                <button onclick="deleteItem('${item.id}')" style="flex: 1; padding: 8px; background: rgba(220, 38, 38, 0.15); color: #f87171; border: 1px solid rgba(220, 38, 38, 0.3); border-radius: 6px; font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer;">
+                                    <i class="fa-solid fa-trash" style="font-size: 0.75rem;"></i> Delete
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
