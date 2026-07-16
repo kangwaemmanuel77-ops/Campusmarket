@@ -1,5 +1,5 @@
 // ==========================================
-// CAMPUS MARKET JS (DYNAMIC ROLE INTEGRATION)
+// CAMPUS MARKET JS (CLEANED & UNIFIED)
 // ==========================================
 
 const supabaseUrl = "https://pijtfjagtqtetcgsslpo.supabase.co";
@@ -45,9 +45,9 @@ async function getUserSafe() {
 function startApp() {
     const page = getPage();
 
-    // ==========================================
+    // ==========================
     // PROFILE PAGE PROCESSING
-    // ==========================================
+    // ==========================
     if (page === "profile.html") {
         const myItemsGrid = document.getElementById("myItemsGrid");
         const savedGrid = document.getElementById("savedGrid");
@@ -111,7 +111,7 @@ function startApp() {
 
                 if (myItemsError) throw myItemsError;
 
-                // Update posted listings count
+                // Live update the posted listings count!
                 if (listingsCount) {
                     listingsCount.innerText = myItems ? myItems.length : "0";
                 }
@@ -190,9 +190,203 @@ function startApp() {
         loadProfileData();
     }
 
-    // ==========================================
+    // ==========================
+    // MESSAGES / CHAT PAGE PROCESSING
+    // ==========================
+    if (page === "messages.html") {
+        const roomsList = document.getElementById("roomsList");
+        const noChatSelected = document.getElementById("noChatSelected");
+        const activeChatBox = document.getElementById("activeChatBox");
+        const chatPartnerEmail = document.getElementById("chatPartnerEmail");
+        const chatItemTitle = document.getElementById("chatItemTitle");
+        const chatMessages = document.getElementById("chatMessages");
+        const chatForm = document.getElementById("chatForm");
+        const messageInput = document.getElementById("messageInput");
+
+        let currentUser = null;
+        let activeRoomId = new URLSearchParams(window.location.search).get("room");
+        let activeChannel = null;
+
+        async function initChatPage() {
+            currentUser = await getUserSafe();
+            if (!currentUser) {
+                alert("Please log in to access your inbox.");
+                window.location.href = "login.html";
+                return;
+            }
+
+            await loadChatRooms();
+
+            if (activeRoomId) {
+                await openChatRoom(activeRoomId);
+            }
+        }
+
+        async function loadChatRooms() {
+            if (!roomsList) return;
+
+            try {
+                const { data: rooms, error } = await client
+                    .from("chat_rooms")
+                    .select(`
+                        id,
+                        buyer_id,
+                        seller_id,
+                        items ( title )
+                    `)
+                    .or(`buyer_id.eq.${currentUser.id},seller_id.eq.${currentUser.id}`);
+
+                if (error) throw error;
+
+                if (!rooms || rooms.length === 0) {
+                    roomsList.innerHTML = `<p class="chat-status">No active conversations yet.</p>`;
+                    return;
+                }
+
+                roomsList.innerHTML = "";
+
+                for (const room of rooms) {
+                    const otherUserId = room.buyer_id === currentUser.id ? room.seller_id : room.buyer_id;
+                    const { data: otherProfile } = await client
+                        .from("profiles")
+                        .select("email, role")
+                        .eq("id", otherUserId)
+                        .single();
+
+                    const partnerEmail = otherProfile?.email || "Unknown User";
+                    const isStudent = otherProfile?.role === "student";
+                    const badgeIcon = isStudent ? "🎓" : "💼";
+                    const isActive = room.id === activeRoomId ? "active" : "";
+
+                    roomsList.innerHTML += `
+                        <div class="room-item ${isActive}" onclick="window.location.href='messages.html?room=${room.id}'">
+                            <div class="room-avatar"><i class="fa-solid fa-user"></i></div>
+                            <div class="room-details">
+                                <h4>${badgeIcon} ${partnerEmail.split('@')[0]}</h4>
+                                <p>${room.items?.title || "Discussing item"}</p>
+                            </div>
+                        </div>
+                    `;
+                }
+            } catch (err) {
+                console.error("Error loading chat rooms:", err);
+                roomsList.innerHTML = `<p class="chat-status" style="color:var(--text-danger);">Error loading inbox.</p>`;
+            }
+        }
+
+        async function openChatRoom(roomId) {
+            activeRoomId = roomId;
+            if (noChatSelected) noChatSelected.style.display = "none";
+            if (activeChatBox) activeChatBox.style.display = "flex";
+
+            try {
+                const { data: room, error: roomErr } = await client
+                    .from("chat_rooms")
+                    .select(`
+                        buyer_id,
+                        seller_id,
+                        items ( title )
+                    `)
+                    .eq("id", roomId)
+                    .single();
+
+                if (roomErr) throw roomErr;
+
+                const otherUserId = room.buyer_id === currentUser.id ? room.seller_id : room.buyer_id;
+                
+                const { data: otherUser } = await client
+                    .from("profiles")
+                    .select("email")
+                    .eq("id", otherUserId)
+                    .single();
+
+                if (chatPartnerEmail) chatPartnerEmail.innerText = otherUser?.email || "Campus Seller";
+                if (chatItemTitle) chatItemTitle.innerText = `Discussing: ${room.items?.title || "Product"}`;
+
+                const { data: messages, error: msgErr } = await client
+                    .from("messages")
+                    .select("*")
+                    .eq("room_id", roomId)
+                    .order("created_at", { ascending: true });
+
+                if (msgErr) throw msgErr;
+
+                if (chatMessages) {
+                    chatMessages.innerHTML = "";
+                    messages.forEach(appendMessage);
+                    scrollToBottom();
+                }
+
+                if (activeChannel) {
+                    client.removeChannel(activeChannel);
+                }
+
+                activeChannel = client
+                    .channel(`room-${roomId}`)
+                    .on(
+                        'postgres_changes',
+                        { event: 'INSERT', schema: 'public', table: 'messages', filter: `room_id=eq.${roomId}` },
+                        (payload) => {
+                            appendMessage(payload.new);
+                            scrollToBottom();
+                        }
+                    )
+                    .subscribe();
+
+            } catch (err) {
+                console.error("Error launching active chat box:", err);
+            }
+        }
+
+        function appendMessage(msg) {
+            if (!chatMessages) return;
+
+            const isSentByMe = msg.sender_id === currentUser.id;
+            const msgClass = isSentByMe ? "sent" : "received";
+
+            chatMessages.innerHTML += `
+                <div class="msg-wrapper ${msgClass}">
+                    <div class="bubble">
+                        ${msg.text}
+                    </div>
+                </div>
+            `;
+        }
+
+        function scrollToBottom() {
+            if (chatMessages) {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+        }
+
+        chatForm?.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const text = messageInput.value.trim();
+            if (!text || !activeRoomId || !currentUser) return;
+
+            messageInput.value = "";
+
+            try {
+                const { error } = await client
+                    .from("messages")
+                    .insert({
+                        room_id: activeRoomId,
+                        sender_id: currentUser.id,
+                        text: text
+                    });
+
+                if (error) throw error;
+            } catch (err) {
+                console.error("Failed to deliver message:", err);
+            }
+        });
+
+        initChatPage();
+    }
+
+    // ==========================
     // FAVORITES SYSTEM
-    // ==========================================
+    // ==========================
     window.toggleFavorite = async function(itemId) {
         try {
             const { data: { session } } = await client.auth.getSession();
@@ -254,16 +448,16 @@ function startApp() {
         }
     }
 
-    // ==========================================
+    // ==========================
     // GLOBAL FUNCTION
-    // ==========================================
+    // ==========================
     window.openItem = (id) => {
         window.location.href = "item.html?id=" + id;
     };
 
-    // ==========================================
+    // ==========================
     // HOME PAGE
-    // ==========================================
+    // ==========================
     if (page === "index.html" || page === "") {
         loadHomeItems();
 
@@ -284,15 +478,14 @@ function startApp() {
         });
     }
 
-    // ==========================================
-    // LOAD HOME ITEMS (WITH TRUST BADGES!)
-    // ==========================================
+    // ==========================
+    // LOAD HOME ITEMS (WITH TRUST BADGES)
+    // ==========================
     async function loadHomeItems() {
         const grid = document.querySelector(".product-grid");
         if (!grid) return;
 
         try {
-            // Relational join: Pull item data AND seller's dynamic role
             const { data, error } = await client
                 .from("items")
                 .select("*, profiles(role)")
@@ -308,7 +501,6 @@ function startApp() {
                 
                 const saved = await isFavorite(item.id);
 
-                // Build trust badge dynamically
                 let cardBadgeHTML = "";
                 if (item.profiles) {
                     if (item.profiles.role === "student") {
@@ -348,9 +540,9 @@ function startApp() {
         }
     }
 
-    // ==========================================
-    // MARKETPLACE PAGE (WITH TRUST BADGES!)
-    // ==========================================
+    // ==========================
+    // MARKETPLACE PAGE
+    // ==========================
     if (page === "marketplace.html") {
         const grid = document.getElementById("marketGrid");
         const searchInput = document.getElementById("searchInput");
@@ -361,7 +553,6 @@ function startApp() {
             if (!grid) return;
 
             try {
-                // Relational join query setup
                 let query = client.from("items").select("*, profiles(role)");
 
                 if (category?.value) {
@@ -384,7 +575,6 @@ function startApp() {
 
                     const saved = await isFavorite(item.id);
 
-                    // Build trust badge dynamically
                     let cardBadgeHTML = "";
                     if (item.profiles) {
                         if (item.profiles.role === "student") {
@@ -433,9 +623,9 @@ function startApp() {
         loadMarket();
     }
 
-    // ==========================================
-    // ITEM DETAIL PAGE (WITH SELLER BADGE)
-    // ==========================================
+    // ==========================
+    // ITEM PAGE (WITH BOTH APP CHAT & WHATSAPP)
+    // ==========================
     if (page === "item.html") {
         const box = document.getElementById("itemBox");
 
@@ -449,7 +639,6 @@ function startApp() {
                     return;
                 }
 
-                // Fetch item and seller's profile details
                 const { data, error } = await client
                     .from("items")
                     .select("*, profiles(role)")
@@ -463,7 +652,6 @@ function startApp() {
 
                 const saved = await isFavorite(data.id);
 
-                // Build trust badge dynamically
                 let sellerBadgeHTML = "";
                 if (data.profiles) {
                     if (data.profiles.role === "student") {
@@ -495,11 +683,16 @@ function startApp() {
                         ${saved ? "❤️ Saved" : "🤍 Save"}
                     </button>
                     <br><br>
-                    <a target="_blank"
-                       href="https://wa.me/${data.contact_number || ''}?text=Hi I'm interested in ${encodeURIComponent(data.title || 'this item')}"
-                       style="background:#25D366;color:white;padding:12px 18px;border-radius:8px;text-decoration:none;display:inline-block;">
-                       Contact Seller
-                    </a>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button onclick="startInAppChat('${data.id}')" style="background: var(--accent-emerald); color: #0f1115; flex: 1; min-width: 150px; font-weight: 600;">
+                            <i class="fa-solid fa-comments"></i> Chat in App
+                        </button>
+                        <a target="_blank"
+                           href="https://wa.me/${data.contact_number || ''}?text=Hi I'm interested in ${encodeURIComponent(data.title || 'this item')}"
+                           style="background:#25D366; color:white; padding:12px 18px; border-radius:10px; text-decoration:none; display:inline-flex; align-items:center; gap:8px; justify-content:center; flex: 1; min-width: 150px; font-weight:600;">
+                           <i class="fa-brands fa-whatsapp"></i> WhatsApp
+                        </a>
+                    </div>
                 `;
             } catch (err) {
                 console.error("Error loading single item page:", err);
@@ -509,9 +702,9 @@ function startApp() {
         loadItem();
     }
 
-    // ==========================================
+    // ==========================
     // SELL PAGE (PROTECTED ONLY HERE)
-    // ==========================================
+    // ==========================
     if (page === "sell.html") {
         const form = document.getElementById("sellForm");
         const msg = document.getElementById("msg");
@@ -575,9 +768,9 @@ function startApp() {
         });
     }
 
-    // ==========================================
-    // AUTH (STABLE)
-    // ==========================================
+    // ==========================
+    // AUTH (UNCHANGED BUT STABLE)
+    // ==========================
     window.signup = async function () {
         const msg = document.getElementById("msg");
         const email = document.getElementById("email").value;
@@ -606,3 +799,59 @@ function startApp() {
         window.location.href = "index.html";
     };
 }
+
+// ==========================
+// GLOBAL CHAT TRIGGER FUNCTION
+// ==========================
+window.startInAppChat = async function(itemId) {
+    try {
+        const user = await getUserSafe();
+        if (!user) {
+            alert("Please log in to chat with the seller.");
+            window.location.href = "login.html";
+            return;
+        }
+
+        const { data: item, error: itemErr } = await client
+            .from("items")
+            .select("user_id")
+            .eq("id", itemId)
+            .single();
+
+        if (itemErr || !item) {
+            alert("Error loading item details.");
+            return;
+        }
+
+        if (item.user_id === user.id) {
+            alert("You cannot start a chat on your own listing!");
+            return;
+        }
+
+        let { data: room, error: roomErr } = await client
+            .from("chat_rooms")
+            .select("id")
+            .eq("item_id", itemId)
+            .eq("buyer_id", user.id)
+            .maybeSingle();
+
+        if (!room) {
+            const { data: newRoom, error: createErr } = await client
+                .from("chat_rooms")
+                .insert({
+                    item_id: itemId,
+                    buyer_id: user.id,
+                    seller_id: item.user_id
+                })
+                .select("id")
+                .single();
+
+            if (createErr) throw createErr;
+            room = newRoom;
+        }
+
+        window.location.href = `messages.html?room=${room.id}`;
+    } catch (err) {
+        console.error("Error starting chat session:", err);
+    }
+};
