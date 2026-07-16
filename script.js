@@ -118,21 +118,78 @@ function startApp() {
 
                 // Render user's items & Set up Profile Tabs dynamically
 if (myItemsGrid) {
-    // 1. Create and inject the navigation tabs if they don't exist yet
+    // 1. Convert static HTML headers into modern dynamic tabs
     if (!document.getElementById('profileTabs')) {
+        // Find the "My Listings" title section
+        const listingsHeader = myItemsGrid.parentElement.querySelector('h2');
+        if (listingsHeader) {
+            // Hide the old static "My Listings" title
+            listingsHeader.style.display = 'none';
+        }
+
+        // Find the "Saved Items 🤍" section and hide its old title/border
+        const savedSection = document.getElementById('savedGrid')?.parentElement;
+        if (savedSection) {
+            savedSection.style.marginTop = '0';
+            savedSection.style.paddingTop = '0';
+            savedSection.style.borderTop = 'none';
+            const savedHeader = savedSection.querySelector('h2');
+            if (savedHeader) savedHeader.style.display = 'none';
+        }
+
+        // Create sleek navigation tabs
         const tabsHTML = `
-            <div id="profileTabs" style="display: flex; gap: 12px; margin: 15px 0 25px 0; border-bottom: 1px solid #2e303f; padding-bottom: 8px; width: 100%;">
-                <button id="tab-listings" onclick="switchProfileTab('listings')" style="background: none; border: none; color: #fff; font-size: 1rem; font-weight: 600; padding: 8px 12px; border-bottom: 2px solid #4f46e5; cursor: pointer; transition: 0.2s;">
+            <div id="profileTabs" style="display: flex; gap: 8px; margin: 0 0 25px 0; border-bottom: 1px solid #2e303f; padding-bottom: 8px; width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch;">
+                <button id="tab-listings" onclick="switchProfileTab('listings')" style="background: none; border: none; color: #fff; font-size: 1rem; font-weight: 600; padding: 8px 16px; border-bottom: 2px solid #4f46e5; cursor: pointer; transition: 0.2s; white-space: nowrap;">
                     My Listings
                 </button>
-                <button id="tab-saved" onclick="switchProfileTab('saved')" style="background: none; border: none; color: #a6adc8; font-size: 1rem; font-weight: 600; padding: 8px 12px; cursor: pointer; transition: 0.2s;">
+                <button id="tab-saved" onclick="switchProfileTab('saved')" style="background: none; border: none; color: #a6adc8; font-size: 1rem; font-weight: 600; padding: 8px 16px; cursor: pointer; transition: 0.2s; white-space: nowrap;">
                     Saved Items
                 </button>
             </div>
         `;
-        // Inject the tabs right before your items grid
-        myItemsGrid.insertAdjacentHTML('beforebegin', tabsHTML);
+        // Inject the tabs right above your listings grid container
+        myItemsGrid.parentElement.insertBefore(
+            document.createRange().createContextualFragment(tabsHTML), 
+            myItemsGrid
+        );
     }
+
+    // 2. Render your dynamic listings cards with the sleek edit/delete design
+    myItemsGrid.innerHTML = "";
+    if (!myItems || myItems.length === 0) {
+        myItemsGrid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #888; padding: 20px;">You haven't listed any items for sale yet.</p>`;
+    } else {
+        myItems.forEach(item => {
+            myItemsGrid.innerHTML += `
+                <div class="card" id="item-card-${item.id}" style="background: #1e1e2e; border: 1px solid #2e303f; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                    <img src="${item.image_url || ''}" alt="${item.title}" style="width: 100%; height: 140px; object-fit: cover;">
+                    <div style="padding: 12px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; gap: 10px;">
+                        <div>
+                            <h3 style="margin: 0 0 4px 0; font-size: 1rem; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.title || 'Untitled'}</h3>
+                            <p style="margin: 0; font-size: 0.95rem; color: #a6adc8; font-weight: bold;">K${item.price || '0'}</p>
+                        </div>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <button onclick="openItem('${item.id}')" style="width: 100%; padding: 8px; background: #313244; color: #cdd6f4; border: 1px solid #45475a; border-radius: 6px; font-size: 0.85rem; font-weight: 600; cursor: pointer;">
+                                View Listing
+                            </button>
+                            <div style="display: flex; gap: 8px; width: 100%;">
+                                <button onclick="openEditModal('${item.id}', '${item.title.replace(/'/g, "\\'")}', ${item.price}, '${item.image_url || ''}')" style="flex: 1; padding: 8px; background: rgba(79, 70, 229, 0.15); color: #818cf8; border: 1px solid rgba(79, 70, 229, 0.3); border-radius: 6px; font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer;">
+                                    <i class="fa-solid fa-pen" style="font-size: 0.75rem;"></i> Edit
+                                </button>
+                                <button onclick="deleteItem('${item.id}')" style="flex: 1; padding: 8px; background: rgba(220, 38, 38, 0.15); color: #f87171; border: 1px solid rgba(220, 38, 38, 0.3); border-radius: 6px; font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer;">
+                                    <i class="fa-solid fa-trash" style="font-size: 0.75rem;"></i> Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+    }
+}
+
 
     // ==========================================
 // PROFILE TAB TOGGLE SYSTEM (LISTINGS, SAVED, CHATS)
@@ -1244,19 +1301,18 @@ document.getElementById('editForm').addEventListener('submit', async function(e)
     }
 });
 
-//// ==========================================
-// PROFILE TAB TOGGLE SYSTEM (LISTINGS, SAVED, CHATS)
+// ==========================================
+// PROFILE TAB TOGGLE SYSTEM (LISTINGS & SAVED)
 // ==========================================
 window.switchProfileTab = function(tabName) {
     const tabListings = document.getElementById('tab-listings');
     const tabSaved = document.getElementById('tab-saved');
-    const tabChats = document.getElementById('tab-chats');
     
-    const gridListings = document.getElementById('myItemsGrid');
-    const gridSaved = document.getElementById('savedGrid');
-    const containerChats = document.getElementById('chatsContainer') || document.getElementById('inAppChatContainer'); // Handles whichever chat container id you have!
+    // Select the whole parent sections so we hide the helper messages too!
+    const sectionListings = document.getElementById('myItemsGrid')?.parentElement;
+    const sectionSaved = document.getElementById('savedGrid')?.parentElement;
 
-    // Reset styles helper
+    // Reset helper
     const resetTab = (tab) => {
         if (tab) {
             tab.style.color = '#a6adc8';
@@ -1264,7 +1320,7 @@ window.switchProfileTab = function(tabName) {
         }
     };
 
-    // Apply Active Tab Style helper
+    // Active helper
     const activeTab = (tab) => {
         if (tab) {
             tab.style.color = '#fff';
@@ -1272,24 +1328,28 @@ window.switchProfileTab = function(tabName) {
         }
     };
 
-    // Hide everything first
-    if (gridListings) gridListings.style.display = 'none';
-    if (gridSaved) gridSaved.style.display = 'none';
-    if (containerChats) containerChats.style.display = 'none';
+    // Default: Hide both sections
+    if (sectionListings) sectionListings.style.display = 'none';
+    if (sectionSaved) sectionSaved.style.display = 'none';
     
     resetTab(tabListings);
     resetTab(tabSaved);
-    resetTab(tabChats);
 
-    // Show the selected one
+    // Show the selected section
     if (tabName === 'listings') {
         activeTab(tabListings);
-        if (gridListings) gridListings.style.display = 'grid';
+        if (sectionListings) sectionListings.style.display = 'block';
     } else if (tabName === 'saved') {
         activeTab(tabSaved);
-        if (gridSaved) gridSaved.style.display = 'grid';
-    } else if (tabName === 'chats') {
-        activeTab(tabChats);
-        if (containerChats) containerChats.style.display = 'block';
+        if (sectionSaved) sectionSaved.style.display = 'block';
     }
 };
+
+// Set initial tab styling when page loads
+document.addEventListener("DOMContentLoaded", () => {
+    // Hide Saved Items container by default on load
+    const sectionSaved = document.getElementById('savedGrid')?.parentElement;
+    if (sectionSaved) {
+        sectionSaved.style.display = 'none';
+    }
+});
