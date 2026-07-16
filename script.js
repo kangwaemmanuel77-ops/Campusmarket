@@ -190,6 +190,82 @@ if (myItemsGrid) {
     }
 }
 
+// ==========================================
+// 2. FETCH & RENDER SAVED ITEMS
+// ==========================================
+async function fetchSavedItems() {
+    const savedGrid = document.getElementById("savedGrid");
+    if (!savedGrid) return;
+
+    try {
+        const { data: sessionData, error: sessionErr } = await client.auth.getSession();
+        const user = sessionData.session?.user || null;
+
+        if (sessionErr || !user) {
+            savedGrid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #888; padding: 20px;">Please log in to view your saved items.</p>`;
+            return;
+        }
+
+        // A. Fetch favorite item IDs for this user from the favorites table
+        const { data: favData, error: favError } = await client
+            .from("favorites")
+            .select("item_id")
+            .eq("user_id", user.id);
+
+        if (favError) throw favError;
+
+        if (!favData || favData.length === 0) {
+            savedGrid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #888; padding: 20px;">You haven't saved any items yet. 🤍</p>`;
+            return;
+        }
+
+        // Extract the item IDs into a clean array
+        const itemIds = favData.map(fav => fav.item_id);
+
+        // B. Query the items table for all matching saved items
+        const { data: savedItems, error: itemsError } = await client
+            .from("items")
+            .select("*")
+            .in("id", itemIds);
+
+        if (itemsError) throw itemsError;
+
+        // C. Render the Saved Cards
+        savedGrid.innerHTML = "";
+        if (!savedItems || savedItems.length === 0) {
+            savedGrid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #888; padding: 20px;">The items you saved are no longer available.</p>`;
+        } else {
+            savedItems.forEach(item => {
+                savedGrid.innerHTML += `
+                    <div class="card" id="saved-card-${item.id}" style="background: #1e1e2e; border: 1px solid #2e303f; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                        <img src="${item.image_url || ''}" alt="${item.title}" style="width: 100%; height: 140px; object-fit: cover;">
+                        <div style="padding: 12px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; gap: 10px;">
+                            <div>
+                                <h3 style="margin: 0 0 4px 0; font-size: 1rem; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.title || 'Untitled'}</h3>
+                                <p style="margin: 0; font-size: 0.95rem; color: #a6adc8; font-weight: bold;">K${item.price || '0'}</p>
+                            </div>
+                            
+                            <div style="display: flex; flex-direction: column; gap: 8px;">
+                                <button onclick="openItem('${item.id}')" style="width: 100%; padding: 8px; background: #313244; color: #cdd6f4; border: 1px solid #45475a; border-radius: 6px; font-size: 0.85rem; font-weight: 600; cursor: pointer;">
+                                    View Listing
+                                </button>
+                                <button onclick="unsaveItem('${item.id}')" style="width: 100%; padding: 8px; background: rgba(220, 38, 38, 0.15); color: #f87171; border: 1px solid rgba(220, 38, 38, 0.3); border-radius: 6px; font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer;">
+                                    <i class="fa-solid fa-heart-broken"></i> Unsave
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+    } catch (err) {
+        console.error("Error fetching saved items:", err);
+        savedGrid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #e78284; padding: 20px;">Failed to load saved items.</p>`;
+    }
+}
+
+// Automatically trigger the fetch when the page runs!
+fetchSavedItems();
 
     // ==========================================
 // PROFILE TAB TOGGLE SYSTEM (LISTINGS, SAVED, CHATS)
