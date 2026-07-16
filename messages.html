@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messages - Campus Market</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght=300;400;500;600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+
+<body>
+
+<header>
+    <div class="logo">
+        <i class="fa-solid fa-store"></i>
+        Campus Market
+    </div>
+
+    <nav>
+        <a href="index.html">
+            <i class="fa-solid fa-house"></i> Home
+        </a>
+        <a href="marketplace.html">
+            <i class="fa-solid fa-shop"></i> Marketplace
+        </a>
+        <a href="sell.html">
+            <i class="fa-solid fa-plus"></i> Sell
+        </a>
+        <a href="profile.html">
+            <i class="fa-solid fa-user"></i> Profile
+        </a>
+    </nav>
+</header>
+
+<section class="chat-container">
+    <div class="chat-layout">
+        
+        <div class="chat-sidebar">
+            <div class="sidebar-header">
+                <h3><i class="fa-solid fa-comments"></i> Inbox</h3>
+            </div>
+            <div class="rooms-list" id="roomsList">
+                <p class="chat-status">Loading conversations...</p>
+            </div>
+        </div>
+
+        <div class="chat-window" id="chatWindow">
+            <div class="no-chat-selected" id="noChatSelected">
+                <i class="fa-solid fa-paper-plane plane-icon"></i>
+                <h3>Your Messages</h3>
+                <p>Select a conversation from the sidebar to start chatting in real-time.</p>
+            </div>
+
+            <div class="active-chat-box" id="activeChatBox" style="display: none;">
+                <div class="chat-header">
+                    <div class="chat-partner-info">
+                        <span class="partner-avatar"><i class="fa-solid fa-user"></i></span>
+                        <div>
+                            <h4 id="chatPartnerEmail">Loading...</h4>
+                            <p id="chatItemTitle" style="font-size: 0.8rem; color: var(--accent-emerald);">Item Details</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chat-messages" id="chatMessages">
+                    </div>
+
+                <form class="chat-input-area" id="chatForm">
+                    <input type="text" id="messageInput" placeholder="Type a message..." autocomplete="off" required>
+                    <button type="submit">
+                        <i class="fa-solid fa-paper-plane"></i> Send
+                    </button>
+                </form>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+<footer>
+    <p>© 2026 Campus Market. All Rights Reserved.</p>
+    <p style="font-size:.75rem;color:#6b7280;margin-top:4px;">
+        Engineered &amp; Maintained by
+        <strong style="color:var(--accent-emerald);">
+            EMMANUEL ELECTRONICS LTD.
+        </strong>
+    </p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="script.js"></script>
+
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messages - Campus Market</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght=300;400;500;600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+
+<body>
+
+<header>
+    <div class="logo">
+        <i class="fa-solid fa-store"></i>
+        Campus Market
+    </div>
+
+    <nav>
+        <a href="index.html">
+            <i class="fa-solid fa-house"></i> Home
+        </a>
+        <a href="marketplace.html">
+            <i class="fa-solid fa-shop"></i> Marketplace
+        </a>
+        <a href="sell.html">
+            <i class="fa-solid fa-plus"></i> Sell
+        </a>
+        <a href="profile.html">
+            <i class="fa-solid fa-user"></i> Profile
+        </a>
+    </nav>
+</header>
+
+<section class="chat-container">
+    <div class="chat-layout">
+        
+        <div class="chat-sidebar">
+            <div class="sidebar-header">
+                <h3><i class="fa-solid fa-comments"></i> Inbox</h3>
+            </div>
+            <div class="rooms-list" id="roomsList">
+                <p class="chat-status">Loading conversations...</p>
+            </div>
+        </div>
+
+        <div class="chat-window" id="chatWindow">
+            <div class="no-chat-selected" id="noChatSelected">
+                <i class="fa-solid fa-paper-plane plane-icon"></i>
+                <h3>Your Messages</h3>
+                <p>Select a conversation from the sidebar to start chatting in real-time.</p>
+            </div>
+
+            <div class="active-chat-box" id="activeChatBox" style="display: none;">
+                <div class="chat-header">
+                    <div class="chat-partner-info">
+                        <span class="partner-avatar"><i class="fa-solid fa-user"></i></span>
+                        <div>
+                            <h4 id="chatPartnerEmail">Loading...</h4>
+                            <p id="chatItemTitle" style="font-size: 0.8rem; color: var(--accent-emerald);">Item Details</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chat-messages" id="chatMessages">
+                    </div>
+
+                <form class="chat-input-area" id="chatForm">
+                    <input type="text" id="messageInput" placeholder="Type a message..." autocomplete="off" required>
+                    <button type="submit">
+                        <i class="fa-solid fa-paper-plane"></i> Send
+                    </button>
+                </form>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+<footer>
+    <p>© 2026 Campus Market. All Rights Reserved.</p>
+    <p style="font-size:.75rem;color:#6b7280;margin-top:4px;">
+        Engineered &amp; Maintained by
+        <strong style="color:var(--accent-emerald);">
+            EMMANUEL ELECTRONICS LTD.
+        </strong>
+    </p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="script.js"></script>
+
+</body>
+</html>
+
