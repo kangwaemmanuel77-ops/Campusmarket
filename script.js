@@ -1,6 +1,6 @@
-// ==========================
-// CAMPUS MARKET JS (CLEAN FIX)
-// ==========================
+// ==========================================
+// CAMPUS MARKET JS (DYNAMIC ROLE INTEGRATION)
+// ==========================================
 
 const supabaseUrl = "https://pijtfjagtqtetcgsslpo.supabase.co";
 const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBpanRmamFndHF0ZXRjZ3NzbHBvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI5ODU2OTYsImV4cCI6MjA5ODU2MTY5Nn0.q4BsxoOZeC3OWl7hqvNiSlqmlYBiT5xty9tgcdbxbC0";
@@ -31,7 +31,7 @@ function getPage() {
 }
 
 // ==========================
-// SAFE SESSION CHECK (IMPORTANT FIX)
+// SAFE SESSION CHECK
 // ==========================
 async function getUserSafe() {
     const { data, error } = await client.auth.getSession();
@@ -45,14 +45,15 @@ async function getUserSafe() {
 function startApp() {
     const page = getPage();
 
-            // ==========================
+    // ==========================================
     // PROFILE PAGE PROCESSING
-    // ==========================
+    // ==========================================
     if (page === "profile.html") {
         const myItemsGrid = document.getElementById("myItemsGrid");
         const savedGrid = document.getElementById("savedGrid");
         const userEmailHeader = document.getElementById("userEmail");
-        const listingsCount = document.getElementById("listingsCount"); // Clean direct selector
+        const userRoleBadge = document.getElementById("userRoleBadge");
+        const listingsCount = document.getElementById("listingsCount");
 
         async function loadProfileData() {
             try {
@@ -66,6 +67,41 @@ function startApp() {
                 // Show email
                 if (userEmailHeader) userEmailHeader.innerText = user.email;
 
+                // Fetch & Render Profile Dynamic Trust Badge
+                if (userRoleBadge) {
+                    try {
+                        const { data: profile, error: profileErr } = await client
+                            .from("profiles")
+                            .select("role")
+                            .eq("id", user.id)
+                            .single();
+
+                        if (profileErr) throw profileErr;
+
+                        if (profile && profile.role === "student") {
+                            userRoleBadge.innerHTML = `
+                                <p style="margin: 0; font-size: 0.9rem; color: #6b7280;">University of Zambia</p>
+                                <span class="role-badge role-student">
+                                    <i class="fa-solid fa-graduation-cap"></i> Verified Student
+                                </span>
+                            `;
+                        } else {
+                            userRoleBadge.innerHTML = `
+                                <p style="margin: 0; font-size: 0.9rem; color: #6b7280;">Lusaka Community</p>
+                                <span class="role-badge role-community">
+                                    <i class="fa-solid fa-briefcase"></i> Community Seller
+                                </span>
+                            `;
+                        }
+                    } catch (badgeErr) {
+                        console.error("Error loading role badge:", badgeErr);
+                        userRoleBadge.innerHTML = `
+                            <p style="margin: 0; font-size: 0.9rem; color: #6b7280;">Campus Member</p>
+                            <span class="role-badge role-community">Campus Member</span>
+                        `;
+                    }
+                }
+
                 // 1. FETCH USER'S OWN LISTINGS
                 const { data: myItems, error: myItemsError } = await client
                     .from("items")
@@ -75,7 +111,7 @@ function startApp() {
 
                 if (myItemsError) throw myItemsError;
 
-                // Live update the posted listings count!
+                // Update posted listings count
                 if (listingsCount) {
                     listingsCount.innerText = myItems ? myItems.length : "0";
                 }
@@ -154,11 +190,9 @@ function startApp() {
         loadProfileData();
     }
 
-
-
-    // ==========================
+    // ==========================================
     // FAVORITES SYSTEM
-    // ==========================
+    // ==========================================
     window.toggleFavorite = async function(itemId) {
         try {
             const { data: { session } } = await client.auth.getSession();
@@ -216,20 +250,20 @@ function startApp() {
             return !!data;
         } catch (err) {
             console.error("Error checking favorite status:", err);
-            return false; // Fail silently so items still load
+            return false;
         }
     }
 
-    // ==========================
+    // ==========================================
     // GLOBAL FUNCTION
-    // ==========================
+    // ==========================================
     window.openItem = (id) => {
         window.location.href = "item.html?id=" + id;
     };
 
-    // ==========================
-    // HOME PAGE (NO AUTH CHECK HERE!)
-    // ==========================
+    // ==========================================
+    // HOME PAGE
+    // ==========================================
     if (page === "index.html" || page === "") {
         loadHomeItems();
 
@@ -250,17 +284,18 @@ function startApp() {
         });
     }
 
-    // ==========================
-    // LOAD HOME ITEMS
-    // ==========================
+    // ==========================================
+    // LOAD HOME ITEMS (WITH TRUST BADGES!)
+    // ==========================================
     async function loadHomeItems() {
         const grid = document.querySelector(".product-grid");
         if (!grid) return;
 
         try {
+            // Relational join: Pull item data AND seller's dynamic role
             const { data, error } = await client
                 .from("items")
-                .select("*")
+                .select("*, profiles(role)")
                 .order("created_at", { ascending: false });
 
             if (error) throw error;
@@ -269,17 +304,37 @@ function startApp() {
             grid.innerHTML = "";
 
             for (const item of data) {
-                // If item ID is missing or bad, skip it cleanly instead of crashing everything
                 if (!item.id) continue; 
                 
                 const saved = await isFavorite(item.id);
 
+                // Build trust badge dynamically
+                let cardBadgeHTML = "";
+                if (item.profiles) {
+                    if (item.profiles.role === "student") {
+                        cardBadgeHTML = `
+                            <span class="role-badge role-student" style="margin: 0 15px 12px; display: inline-flex;">
+                                <i class="fa-solid fa-graduation-cap"></i> Student
+                            </span>
+                        `;
+                    } else if (item.profiles.role === "community") {
+                        cardBadgeHTML = `
+                            <span class="role-badge role-community" style="margin: 0 15px 12px; display: inline-flex;">
+                                <i class="fa-solid fa-briefcase"></i> Vendor
+                            </span>
+                        `;
+                    }
+                }
+
                 grid.innerHTML += `
-                    <div class="card">
-                        <img src="${item.image_url || ''}" alt="${item.title || 'Item'}">
-                        <h3>${item.title || 'No Title'}</h3>
-                        <p>K${item.price || '0'}</p>
-                        <div class="card-buttons">
+                    <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <img src="${item.image_url || ''}" alt="${item.title || 'Item'}">
+                            <h3>${item.title || 'No Title'}</h3>
+                            <p>K${item.price || '0'}</p>
+                            ${cardBadgeHTML}
+                        </div>
+                        <div class="card-buttons" style="padding: 12px 15px;">
                             <button onclick="openItem('${item.id}')">View</button>
                             <button class="favorite-btn" onclick="toggleFavorite('${item.id}')">
                                 ${saved ? "❤️ Saved" : "🤍 Save"}
@@ -293,9 +348,9 @@ function startApp() {
         }
     }
 
-    // ==========================
-    // MARKETPLACE PAGE
-    // ==========================
+    // ==========================================
+    // MARKETPLACE PAGE (WITH TRUST BADGES!)
+    // ==========================================
     if (page === "marketplace.html") {
         const grid = document.getElementById("marketGrid");
         const searchInput = document.getElementById("searchInput");
@@ -306,7 +361,8 @@ function startApp() {
             if (!grid) return;
 
             try {
-                let query = client.from("items").select("*");
+                // Relational join query setup
+                let query = client.from("items").select("*, profiles(role)");
 
                 if (category?.value) {
                     query = query.eq("category", category.value);
@@ -328,12 +384,33 @@ function startApp() {
 
                     const saved = await isFavorite(item.id);
 
+                    // Build trust badge dynamically
+                    let cardBadgeHTML = "";
+                    if (item.profiles) {
+                        if (item.profiles.role === "student") {
+                            cardBadgeHTML = `
+                                <span class="role-badge role-student" style="margin: 0 15px 12px; display: inline-flex;">
+                                    <i class="fa-solid fa-graduation-cap"></i> Student
+                                </span>
+                            `;
+                        } else if (item.profiles.role === "community") {
+                            cardBadgeHTML = `
+                                <span class="role-badge role-community" style="margin: 0 15px 12px; display: inline-flex;">
+                                    <i class="fa-solid fa-briefcase"></i> Vendor
+                                </span>
+                            `;
+                        }
+                    }
+
                     grid.innerHTML += `
-                        <div class="card">
-                            <img src="${item.image_url || ''}" alt="${item.title || 'Item'}">
-                            <h3>${item.title || 'No Title'}</h3>
-                            <p>K${item.price || '0'}</p>
-                            <div class="card-buttons">
+                        <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
+                            <div>
+                                <img src="${item.image_url || ''}" alt="${item.title || 'Item'}">
+                                <h3>${item.title || 'No Title'}</h3>
+                                <p>K${item.price || '0'}</p>
+                                ${cardBadgeHTML}
+                            </div>
+                            <div class="card-buttons" style="padding: 12px 15px;">
                                 <button onclick="openItem('${item.id}')">View</button>
                                 <button class="favorite-btn" onclick="toggleFavorite('${item.id}')">
                                     ${saved ? "❤️ Saved" : "🤍 Save"}
@@ -356,9 +433,9 @@ function startApp() {
         loadMarket();
     }
 
-    // ==========================
-    // ITEM PAGE
-    // ==========================
+    // ==========================================
+    // ITEM DETAIL PAGE (WITH SELLER BADGE)
+    // ==========================================
     if (page === "item.html") {
         const box = document.getElementById("itemBox");
 
@@ -372,9 +449,10 @@ function startApp() {
                     return;
                 }
 
+                // Fetch item and seller's profile details
                 const { data, error } = await client
                     .from("items")
-                    .select("*")
+                    .select("*, profiles(role)")
                     .eq("id", id)
                     .single();
 
@@ -385,9 +463,32 @@ function startApp() {
 
                 const saved = await isFavorite(data.id);
 
+                // Build trust badge dynamically
+                let sellerBadgeHTML = "";
+                if (data.profiles) {
+                    if (data.profiles.role === "student") {
+                        sellerBadgeHTML = `
+                            <div style="margin-bottom: 15px;">
+                                <span class="role-badge role-student">
+                                    <i class="fa-solid fa-graduation-cap"></i> Verified Student Seller
+                                </span>
+                            </div>
+                        `;
+                    } else if (data.profiles.role === "community") {
+                        sellerBadgeHTML = `
+                            <div style="margin-bottom: 15px;">
+                                <span class="role-badge role-community">
+                                    <i class="fa-solid fa-briefcase"></i> Community Seller
+                                </span>
+                            </div>
+                        `;
+                    }
+                }
+
                 box.innerHTML = `
                     <img src="${data.image_url || ''}" style="max-width:100%">
                     <h2>${data.title || 'No Title'}</h2>
+                    ${sellerBadgeHTML}
                     <p><strong>K${data.price || '0'}</strong></p>
                     <p>${data.description || 'No description provided.'}</p>
                     <button class="favorite-btn" onclick="toggleFavorite('${data.id}')">
@@ -408,9 +509,9 @@ function startApp() {
         loadItem();
     }
 
-    // ==========================
+    // ==========================================
     // SELL PAGE (PROTECTED ONLY HERE)
-    // ==========================
+    // ==========================================
     if (page === "sell.html") {
         const form = document.getElementById("sellForm");
         const msg = document.getElementById("msg");
@@ -474,9 +575,9 @@ function startApp() {
         });
     }
 
-    // ==========================
-    // AUTH (UNCHANGED BUT STABLE)
-    // ==========================
+    // ==========================================
+    // AUTH (STABLE)
+    // ==========================================
     window.signup = async function () {
         const msg = document.getElementById("msg");
         const email = document.getElementById("email").value;
@@ -505,4 +606,3 @@ function startApp() {
         window.location.href = "index.html";
     };
 }
-
