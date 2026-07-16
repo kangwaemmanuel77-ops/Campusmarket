@@ -116,24 +116,41 @@ function startApp() {
                     listingsCount.innerText = myItems ? myItems.length : "0";
                 }
 
-                // Render user's items
+                // Render user's items & Set up Profile Tabs dynamically
 if (myItemsGrid) {
+    // 1. Create and inject the navigation tabs if they don't exist yet
+    if (!document.getElementById('profileTabs')) {
+        const tabsHTML = `
+            <div id="profileTabs" style="display: flex; gap: 12px; margin: 15px 0 25px 0; border-bottom: 1px solid #2e303f; padding-bottom: 8px; width: 100%;">
+                <button id="tab-listings" onclick="switchProfileTab('listings')" style="background: none; border: none; color: #fff; font-size: 1rem; font-weight: 600; padding: 8px 12px; border-bottom: 2px solid #4f46e5; cursor: pointer; transition: 0.2s;">
+                    My Listings
+                </button>
+                <button id="tab-saved" onclick="switchProfileTab('saved')" style="background: none; border: none; color: #a6adc8; font-size: 1rem; font-weight: 600; padding: 8px 12px; cursor: pointer; transition: 0.2s;">
+                    Saved Items
+                </button>
+            </div>
+        `;
+        // Inject the tabs right before your items grid
+        myItemsGrid.insertAdjacentHTML('beforebegin', tabsHTML);
+    }
+
+    // 2. Render the actual listing cards
     myItemsGrid.innerHTML = "";
     if (!myItems || myItems.length === 0) {
         myItemsGrid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #888; padding: 20px;">You haven't listed any items for sale yet.</p>`;
     } else {
         myItems.forEach(item => {
             myItemsGrid.innerHTML += `
-                <div class="card" id="item-card-${item.id}" style="background: #1e1e2e; border: 1px solid #2e303f; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column;">
+                <div class="card" id="item-card-${item.id}" style="background: #1e1e2e; border: 1px solid #2e303f; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
                     <img src="${item.image_url || ''}" alt="${item.title}" style="width: 100%; height: 140px; object-fit: cover;">
-                    <div style="padding: 12px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between;">
+                    <div style="padding: 12px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; gap: 10px;">
                         <div>
                             <h3 style="margin: 0 0 4px 0; font-size: 1rem; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.title || 'Untitled'}</h3>
-                            <p style="margin: 0 0 12px 0; font-size: 0.95rem; color: #a6adc8; font-weight: bold;">K${item.price || '0'}</p>
+                            <p style="margin: 0; font-size: 0.95rem; color: #a6adc8; font-weight: bold;">K${item.price || '0'}</p>
                         </div>
                         
                         <div style="display: flex; flex-direction: column; gap: 8px;">
-                            <button onclick="openItem('${item.id}')" style="width: 100%; padding: 8px; background: #313244; color: #cdd6f4; border: 1px solid #45475a; border-radius: 6px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: 0.2s;">
+                            <button onclick="openItem('${item.id}')" style="width: 100%; padding: 8px; background: #313244; color: #cdd6f4; border: 1px solid #45475a; border-radius: 6px; font-size: 0.85rem; font-weight: 600; cursor: pointer;">
                                 View Listing
                             </button>
                             <div style="display: flex; gap: 8px; width: 100%;">
@@ -151,6 +168,7 @@ if (myItemsGrid) {
         });
     }
 }
+
 
 
         
@@ -1210,3 +1228,40 @@ document.getElementById('editForm').addEventListener('submit', async function(e)
     }
 });
 
+// ==========================================
+// PROFILE TAB TOGGLE SYSTEM (JS ONLY)
+// ==========================================
+window.switchProfileTab = function(tabName) {
+    const tabListings = document.getElementById('tab-listings');
+    const tabSaved = document.getElementById('tab-saved');
+    const gridListings = document.getElementById('myItemsGrid');
+    const gridSaved = document.getElementById('savedGrid');
+
+    if (tabName === 'listings') {
+        // Highlight Listings Tab
+        if (tabListings) {
+            tabListings.style.color = '#fff';
+            tabListings.style.borderBottom = '2px solid #4f46e5';
+        }
+        if (tabSaved) {
+            tabSaved.style.color = '#a6adc8';
+            tabSaved.style.borderBottom = 'none';
+        }
+        // Show listings, hide saved
+        if (gridListings) gridListings.style.display = 'grid';
+        if (gridSaved) gridSaved.style.display = 'none';
+    } else if (tabName === 'saved') {
+        // Highlight Saved Tab
+        if (tabSaved) {
+            tabSaved.style.color = '#fff';
+            tabSaved.style.borderBottom = '2px solid #4f46e5';
+        }
+        if (tabListings) {
+            tabListings.style.color = '#a6adc8';
+            tabListings.style.borderBottom = 'none';
+        }
+        // Show saved, hide listings
+        if (gridListings) gridListings.style.display = 'none';
+        if (gridSaved) gridSaved.style.display = 'grid';
+    }
+};
