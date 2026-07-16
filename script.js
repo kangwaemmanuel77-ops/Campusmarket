@@ -1429,3 +1429,43 @@ document.addEventListener("DOMContentLoaded", () => {
         sectionSaved.style.display = 'none';
     }
 });
+// ==========================================
+// UNSAVE / REMOVE FROM FAVORITES FUNCTION
+// ==========================================
+window.unsaveItem = async function(itemId) {
+    try {
+        const { data, error: sessionErr } = await client.auth.getSession();
+        const user = data.session?.user || null;
+
+        if (sessionErr || !user) {
+            alert("Session expired. Please log in.");
+            window.location.href = "login.html";
+            return;
+        }
+
+        // Delete the entry from the favorites table
+        const { error } = await client
+            .from("favorites")
+            .delete()
+            .eq("item_id", itemId)
+            .eq("user_id", user.id);
+
+        if (error) throw error;
+
+        // Instantly slide/remove card from the HTML page
+        const card = document.getElementById(`saved-card-${itemId}`);
+        if (card) {
+            card.remove();
+        }
+        
+        // If grid is now empty, show the "no saved items" message
+        const savedGrid = document.getElementById("savedGrid");
+        if (savedGrid && savedGrid.children.length === 0) {
+            savedGrid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #888; padding: 20px;">You haven't saved any items yet. 🤍</p>`;
+        }
+
+    } catch (err) {
+        console.error("Failed to unsave item:", err);
+        alert("Could not unsave item.");
+    }
+};
