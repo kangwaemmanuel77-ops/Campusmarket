@@ -117,25 +117,35 @@ function startApp() {
                 }
 
                 // Render user's items
-                if (myItemsGrid) {
-                    myItemsGrid.innerHTML = "";
-                    if (!myItems || myItems.length === 0) {
-                        myItemsGrid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #888;">You haven't listed any items for sale yet.</p>`;
-                    } else {
-                        myItems.forEach(item => {
-                            myItemsGrid.innerHTML += `
-                                <div class="card">
-                                    <img src="${item.image_url || ''}" alt="${item.title}">
-                                    <h3>${item.title || 'Untitled'}</h3>
-                                    <p>K${item.price || '0'}</p>
-                                    <div class="card-buttons">
-                                        <button onclick="openItem('${item.id}')">View</button>
-                                    </div>
-                                </div>
-                            `;
-                        });
-                    }
-                }
+if (myItemsGrid) {
+    myItemsGrid.innerHTML = "";
+    if (!myItems || myItems.length === 0) {
+        myItemsGrid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #888;">You haven't listed any items for sale yet.</p>`;
+    } else {
+        myItems.forEach(item => {
+            myItemsGrid.innerHTML += `
+                <div class="card" id="item-card-${item.id}">
+                    <img src="${item.image_url || ''}" alt="${item.title}">
+                    <h3>${item.title || 'Untitled'}</h3>
+                    <p>K${item.price || '0'}</p>
+                    <div class="card-buttons" style="display:flex; flex-direction:column; gap:6px; padding:10px;">
+                        <button onclick="openItem('${item.id}')" style="width:100%;">View Listing</button>
+                        <div style="display:flex; gap:6px; width:100%;">
+                            <button onclick="editItemPrompt('${item.id}', '${item.title.replace(/'/g, "\\'")}', ${item.price})" style="background:#4f46e5; color:white; flex:1; font-size:0.85rem; border:none; padding:8px; border-radius:6px; font-weight:600;">
+                                <i class="fa-solid fa-pen"></i> Edit
+                            </button>
+                            <button onclick="deleteItem('${item.id}')" style="background:#dc2626; color:white; flex:1; font-size:0.85rem; border:none; padding:8px; border-radius:6px; font-weight:600;">
+                                <i class="fa-solid fa-trash"></i> Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+    }
+}
+
+        
 
                 // 2. FETCH SAVED ITEMS 
                 if (savedGrid) {
@@ -964,3 +974,4 @@ window.editItemPrompt = async function(itemId, currentTitle, currentPrice) {
         alert("Failed to update listing.");
     }
 };
+
