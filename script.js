@@ -1064,4 +1064,142 @@ window.editItemPrompt = async function(itemId, currentTitle, currentPrice) {
         alert("Failed to update listing.");
     }
 };
+// ==========================================
+// PROFESSIONAL EDIT MODAL SYSTEM
+// ==========================================
+
+// 1. Inject Modal HTML & CSS into the page dynamically
+const modalHTML = `
+<div id="editModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:center; padding:20px; box-sizing:border-box;">
+    <div style="background:#1e1e2e; color:#fff; width:100%; max-width:450px; padding:24px; border-radius:16px; box-shadow:0 10px 25px rgba(0,0,0,0.5); font-family:sans-serif; position:relative;">
+        <h3 style="margin-top:0; margin-bottom:16px; font-size:1.3rem;">Edit Your Listing</h3>
+        
+        <form id="editForm" style="display:flex; flex-direction:column; gap:14px;">
+            <input type="hidden" id="editItemId">
+            
+            <div>
+                <label style="display:block; font-size:0.85rem; color:#a6adc8; margin-bottom:4px;">Item Title</label>
+                <input type="text" id="editTitle" required style="width:100%; padding:10px; border-radius:8px; border:1px solid #45475a; background:#313244; color:#fff; box-sizing:border-box;">
+            </div>
+
+            <div>
+                <label style="display:block; font-size:0.85rem; color:#a6adc8; margin-bottom:4px;">Price (ZMK)</label>
+                <input type="number" id="editPrice" required style="width:100%; padding:10px; border-radius:8px; border:1px solid #45475a; background:#313244; color:#fff; box-sizing:border-box;">
+            </div>
+
+            <div>
+                <label style="display:block; font-size:0.85rem; color:#a6adc8; margin-bottom:4px;">Current Image Preview</label>
+                <img id="editImagePreview" src="" style="width:100px; height:100px; object-fit:cover; border-radius:8px; margin-bottom:8px; display:block; border:1px solid #45475a;">
+                
+                <label style="display:block; font-size:0.85rem; color:#a6adc8; margin-bottom:4px;">Upload New Image (Optional)</label>
+                <input type="file" id="editImageFile" accept="image/*" style="width:100%; color:#a6adc8; font-size:0.85rem;">
+            </div>
+
+            <div style="display:flex; gap:10px; margin-top:10px;">
+                <button type="button" onclick="closeEditModal()" style="flex:1; padding:10px; border-radius:8px; border:none; background:#45475a; color:#fff; font-weight:bold; cursor:pointer;">Cancel</button>
+                <button type="submit" style="flex:1; padding:10px; border-radius:8px; border:none; background:#4f46e5; color:#fff; font-weight:bold; cursor:pointer;">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+`;
+
+// Inject it into body when script loads
+document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+// 2. Open Modal & Populate fields
+window.openEditModal = function(itemId, title, price, imageUrl) {
+    document.getElementById('editItemId').value = itemId;
+    document.getElementById('editTitle').value = title;
+    document.getElementById('editPrice').value = price;
+    
+    const imgPreview = document.getElementById('editImagePreview');
+    if (imageUrl) {
+        imgPreview.src = imageUrl;
+        imgPreview.style.display = 'block';
+    } else {
+        imgPreview.style.display = 'none';
+    }
+    
+    // Clear any previous file selection
+    document.getElementById('editImageFile').value = "";
+    
+    // Show Modal
+    document.getElementById('editModal').style.display = 'flex';
+};
+
+// 3. Close Modal
+window.closeEditModal = function() {
+    document.getElementById('editModal').style.display = 'none';
+};
+
+// 4. Handle Form Submit (Upload image & Save to DB)
+document.getElementById('editForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const itemId = document.getElementById('editItemId').value;
+    const title = document.getElementById('editTitle').value.trim();
+    const price = parseFloat(document.getElementById('editPrice').value);
+    const fileInput = document.getElementById('editImageFile');
+    const file = fileInput.files[0];
+    
+    if (isNaN(price) || price <= 0) {
+        alert("Please enter a valid price.");
+        return;
+    }
+
+    try {
+        const { data, error: sessionErr } = await client.auth.getSession();
+        const user = data.session?.user || null;
+
+        if (sessionErr || !user) {
+            alert("Session expired. Please log in.");
+            window.location.href = "login.html";
+            return;
+        }
+
+        let imageUrl = document.getElementById('editImagePreview').src;
+
+        // If a new image file was selected on your phone, upload it first!
+        if (file) {
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${user.id}/${Date.now()}.${fileExt}`;
+            
+            // Replace 'item-images' with your actual Supabase storage bucket name!
+            const { data: uploadData, error: uploadErr } = await client.storage
+                .from('item-images') 
+                .upload(fileName, file, { upsert: true });
+
+            if (uploadErr) throw uploadErr;
+
+            // Get the public URL for the newly uploaded photo
+            const { data: urlData } = client.storage
+                .from('item-images')
+                .getPublicUrl(fileName);
+
+            imageUrl = urlData.publicUrl;
+        }
+
+        // Update the item in your Supabase table
+        const { error: updateErr } = await client
+            .from('items')
+            .update({
+                title: title,
+                price: price,
+                image_url: imageUrl
+            })
+            .eq('id', itemId)
+            .eq('user_id', user.id);
+
+        if (updateErr) throw updateErr;
+
+        alert("✨ Listing updated successfully!");
+        closeEditModal();
+        location.reload(); // Refresh to show the new title, price, and image!
+
+    } catch (err) {
+        console.error("Update failed:", err);
+        alert("An error occurred while updating your listing.");
+    }
+});
 
