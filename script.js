@@ -974,4 +974,93 @@ window.editItemPrompt = async function(itemId, currentTitle, currentPrice) {
         alert("Failed to update listing.");
     }
 };
+// ==========================================
+// ITEM MANAGEMENT (EDIT & DELETE FUNCTIONS)
+// ==========================================
+
+// 1. DELETE LISTING FUNCTION
+window.deleteItem = async function(itemId) {
+    const confirmDelete = confirm("Are you sure you want to delete this listing? This action cannot be undone.");
+    if (!confirmDelete) return;
+
+    try {
+        const { data, error: sessionErr } = await client.auth.getSession();
+        const user = data.session?.user || null;
+
+        if (sessionErr || !user) {
+            alert("Your session has expired. Please log in again.");
+            window.location.href = "login.html";
+            return;
+        }
+
+        // Delete from database
+        const { error } = await client
+            .from("items")
+            .delete()
+            .eq("id", itemId)
+            .eq("user_id", user.id); 
+
+        if (error) throw error;
+
+        // Remove card from UI immediately
+        const card = document.getElementById(`item-card-${itemId}`);
+        if (card) card.remove();
+
+        // Keep count in sync
+        const countBadge = document.getElementById("listingsCount");
+        if (countBadge) {
+            const currentCount = parseInt(countBadge.innerText) || 0;
+            countBadge.innerText = Math.max(0, currentCount - 1);
+        }
+
+        alert("🗑️ Listing deleted successfully.");
+    } catch (err) {
+        console.error("Delete failed:", err);
+        alert("Failed to delete listing.");
+    }
+};
+
+// 2. QUICK EDIT TITLE/PRICE FUNCTION
+window.editItemPrompt = async function(itemId, currentTitle, currentPrice) {
+    const newTitle = prompt("Update Item Title:", currentTitle);
+    if (newTitle === null) return; 
+    
+    const newPriceStr = prompt("Update Item Price (K):", currentPrice);
+    if (newPriceStr === null) return; 
+
+    const newPrice = parseFloat(newPriceStr);
+    if (isNaN(newPrice) || newPrice <= 0) {
+        alert("Please enter a valid price.");
+        return;
+    }
+
+    try {
+        const { data, error: sessionErr } = await client.auth.getSession();
+        const user = data.session?.user || null;
+
+        if (sessionErr || !user) {
+            alert("Session expired. Please log in.");
+            window.location.href = "login.html";
+            return;
+        }
+
+        const { error } = await client
+            .from("items")
+            .update({
+                title: newTitle.trim(),
+                price: newPrice
+            })
+            .eq("id", itemId)
+            .eq("user_id", user.id);
+
+        if (error) throw error;
+
+        alert("✨ Listing updated successfully!");
+        location.reload(); 
+
+    } catch (err) {
+        console.error("Update failed:", err);
+        alert("Failed to update listing.");
+    }
+};
 
