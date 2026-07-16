@@ -131,7 +131,7 @@ if (myItemsGrid) {
                     <div class="card-buttons" style="display:flex; flex-direction:column; gap:6px; padding:10px;">
                         <button onclick="openItem('${item.id}')" style="width:100%;">View Listing</button>
                         <div style="display:flex; gap:6px; width:100%;">
-                            <button onclick="editItemPrompt('${item.id}', '${item.title.replace(/'/g, "\\'")}', ${item.price})" style="background:#4f46e5; color:white; flex:1; font-size:0.85rem; border:none; padding:8px; border-radius:6px; font-weight:600;">
+                            <button onclick="openEditModal('${item.id}', '${item.title.replace(/'/g, "\\'")}', ${item.price}, '${item.image_url || ''}')" style="background:#4f46e5; color:white; flex:1; font-size:0.85rem; border:none; padding:8px; border-radius:6px; font-weight:600;">
                                 <i class="fa-solid fa-pen"></i> Edit
                             </button>
                             <button onclick="deleteItem('${item.id}')" style="background:#dc2626; color:white; flex:1; font-size:0.85rem; border:none; padding:8px; border-radius:6px; font-weight:600;">
@@ -144,6 +144,7 @@ if (myItemsGrid) {
         });
     }
 }
+
 
         
 
