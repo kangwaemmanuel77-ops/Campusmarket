@@ -805,13 +805,23 @@ function startApp() {
 // ==========================
 window.startInAppChat = async function(itemId) {
     try {
-        const user = await getUserSafe();
-        if (!user) {
+        // Safe check: get the Supabase client
+        if (!client) {
+            alert("Database is connecting, please try again in a moment.");
+            return;
+        }
+
+        // Get the current logged-in user safely from the active session
+        const { data, error } = await client.auth.getSession();
+        const user = data.session?.user || null;
+
+        if (error || !user) {
             alert("Please log in to chat with the seller.");
             window.location.href = "login.html";
             return;
         }
 
+        // Fetch the seller's user_id from the item details
         const { data: item, error: itemErr } = await client
             .from("items")
             .select("user_id")
@@ -823,11 +833,13 @@ window.startInAppChat = async function(itemId) {
             return;
         }
 
+        // Prevent self-chatting
         if (item.user_id === user.id) {
             alert("You cannot start a chat on your own listing!");
             return;
         }
 
+        // Check if a chat room already exists
         let { data: room, error: roomErr } = await client
             .from("chat_rooms")
             .select("id")
@@ -835,7 +847,10 @@ window.startInAppChat = async function(itemId) {
             .eq("buyer_id", user.id)
             .maybeSingle();
 
+        if (roomErr) throw roomErr;
+
         if (!room) {
+            // Create a new room if none exists
             const { data: newRoom, error: createErr } = await client
                 .from("chat_rooms")
                 .insert({
@@ -850,8 +865,10 @@ window.startInAppChat = async function(itemId) {
             room = newRoom;
         }
 
+        // Redirect safely to the chat room
         window.location.href = `messages.html?room=${room.id}`;
     } catch (err) {
         console.error("Error starting chat session:", err);
+        alert("Failed to initialize chat. Please check the developer console.");
     }
 };
