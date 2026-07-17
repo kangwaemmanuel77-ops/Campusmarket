@@ -172,7 +172,7 @@ if (myItemsGrid) {
         myItems.forEach(item => {
             myItemsGrid.innerHTML += `
                 <div class="card" id="item-card-${item.id}" style="background: #1e1e2e; border: 1px solid #2e303f; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                    <img src="${item.image_url || ''}" alt="${item.title}" style="width: 100%; height: 140px; object-fit: cover;">
+                    <img src="${item.image_url \vert{}\vert{} ''}" alt="${item.title}" style="width: 100%; height: 140px; object-fit: cover;">
                     <div style="padding: 12px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; gap: 10px;">
                         <div>
                             <h3 style="margin: 0 0 4px 0; font-size: 1rem; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.title || 'Untitled'}</h3>
@@ -184,7 +184,7 @@ if (myItemsGrid) {
                                 View Listing
                             </button>
                             <div style="display: flex; gap: 8px; width: 100%;">
-                                <button onclick="openEditModal('${item.id}', '${item.title.replace(/'/g, "\\'")}', ${item.price}, '${item.image_url || ''}')" style="flex: 1; padding: 8px; background: rgba(79, 70, 229, 0.15); color: #818cf8; border: 1px solid rgba(79, 70, 229, 0.3); border-radius: 6px; font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer;">
+                                <button onclick="openEditModal('${item.id}', '${item.title.replace(/'/g, "\\\\'")}', ${item.price}, '${item.image_url || ''}')" style="flex: 1; padding: 8px; background: rgba(79, 70, 229, 0.15); color: #818cf8; border: 1px solid rgba(79, 70, 229, 0.3); border-radius: 6px; font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer;">
                                     <i class="fa-solid fa-pen" style="font-size: 0.75rem;"></i> Edit
                                 </button>
                                 <button onclick="deleteItem('${item.id}')" style="flex: 1; padding: 8px; background: rgba(220, 38, 38, 0.15); color: #f87171; border: 1px solid rgba(220, 38, 38, 0.3); border-radius: 6px; font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer;">
@@ -198,6 +198,7 @@ if (myItemsGrid) {
         });
     }
 }
+
 
 
     // 2. Render your dynamic listings cards with the sleek edit/delete design
