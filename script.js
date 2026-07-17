@@ -126,290 +126,77 @@ function startApp() {
                 }
 
                 // Render user's items & Set up Profile Tabs dynamically
-if (myItemsGrid) {
-    // 1. Convert static HTML headers into modern dynamic tabs
-    if (!document.getElementById('profileTabs')) {
-        // Find the "My Listings" title section
-        const listingsHeader = myItemsGrid.parentElement.querySelector('h2');
-        if (listingsHeader) {
-            // Hide the old static "My Listings" title
-            listingsHeader.style.display = 'none';
-        }
+                if (myItemsGrid) {
+                    // Convert static HTML headers into modern dynamic tabs
+                    if (!document.getElementById('profileTabs')) {
+                        const listingsHeader = myItemsGrid.parentElement.querySelector('h2');
+                        if (listingsHeader) {
+                            listingsHeader.style.display = 'none';
+                        }
 
-        // Find the "Saved Items 🤍" section and hide its old title/border
-        const savedSection = document.getElementById('savedGrid')?.parentElement;
-        if (savedSection) {
-            savedSection.style.marginTop = '0';
-            savedSection.style.paddingTop = '0';
-            savedSection.style.borderTop = 'none';
-            const savedHeader = savedSection.querySelector('h2');
-            if (savedHeader) savedHeader.style.display = 'none';
-        }
+                        const savedSection = document.getElementById('savedGrid')?.parentElement;
+                        if (savedSection) {
+                            savedSection.style.marginTop = '0';
+                            savedSection.style.paddingTop = '0';
+                            savedSection.style.borderTop = 'none';
+                            const savedHeader = savedSection.querySelector('h2');
+                            if (savedHeader) savedHeader.style.display = 'none';
+                        }
 
-        // Create sleek navigation tabs
-        const tabsHTML = `
-            <div id="profileTabs" style="display: flex; gap: 8px; margin: 0 0 25px 0; border-bottom: 1px solid #2e303f; padding-bottom: 8px; width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch;">
-                <button id="tab-listings" onclick="switchProfileTab('listings')" style="background: none; border: none; color: #fff; font-size: 1rem; font-weight: 600; padding: 8px 16px; border-bottom: 2px solid #4f46e5; cursor: pointer; transition: 0.2s; white-space: nowrap;">
-                    My Listings
-                </button>
-                <button id="tab-saved" onclick="switchProfileTab('saved')" style="background: none; border: none; color: #a6adc8; font-size: 1rem; font-weight: 600; padding: 8px 16px; cursor: pointer; transition: 0.2s; white-space: nowrap;">
-                    Saved Items
-                </button>
-            </div>
-        `;
-        // Inject the tabs right above your listings grid container
-        myItemsGrid.parentElement.insertBefore(
-            document.createRange().createContextualFragment(tabsHTML), 
-            myItemsGrid
-        );
-    }
-
-    // 2. Render your dynamic listings cards with the sleek edit/delete design
-    myItemsGrid.innerHTML = "";
-    if (!myItems || myItems.length === 0) {
-        myItemsGrid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #888; padding: 20px;">You haven't listed any items for sale yet.</p>`;
-    } else {
-        myItems.forEach(item => {
-            myItemsGrid.innerHTML += `
-                <div class="card" id="item-card-${item.id}" style="background: #1e1e2e; border: 1px solid #2e303f; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                    <img src="${item.image_url || ''}" alt="${item.title}" style="width: 100%; height: 140px; object-fit: cover;">
-                    <div style="padding: 12px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; gap: 10px;">
-                        <div>
-                            <h3 style="margin: 0 0 4px 0; font-size: 1rem; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.title || 'Untitled'}</h3>
-                            <p style="margin: 0; font-size: 0.95rem; color: #a6adc8; font-weight: bold;">K${item.price || '0'}</p>
-                        </div>
-                        
-                        <div style="display: flex; flex-direction: column; gap: 8px;">
-                            <button onclick="openItem('${item.id}')" style="width: 100%; padding: 8px; background: #313244; color: #cdd6f4; border: 1px solid #45475a; border-radius: 6px; font-size: 0.85rem; font-weight: 600; cursor: pointer;">
-                                View Listing
-                            </button>
-                            <div style="display: flex; gap: 8px; width: 100%;">
-                                <button onclick="openEditModal('${item.id}', '${item.title.replace(/'/g, "\\\\'")}', ${item.price}, '${item.image_url || ''}')" style="flex: 1; padding: 8px; background: rgba(79, 70, 229, 0.15); color: #818cf8; border: 1px solid rgba(79, 70, 229, 0.3); border-radius: 6px; font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer;">
-                                    <i class="fa-solid fa-pen" style="font-size: 0.75rem;"></i> Edit
+                        const tabsHTML = `
+                            <div id="profileTabs" style="display: flex; gap: 8px; margin: 0 0 25px 0; border-bottom: 1px solid #2e303f; padding-bottom: 8px; width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch;">
+                                <button id="tab-listings" onclick="switchProfileTab('listings')" style="background: none; border: none; color: #fff; font-size: 1rem; font-weight: 600; padding: 8px 16px; border-bottom: 2px solid #4f46e5; cursor: pointer; transition: 0.2s; white-space: nowrap;">
+                                    My Listings
                                 </button>
-                                <button onclick="deleteItem('${item.id}')" style="flex: 1; padding: 8px; background: rgba(220, 38, 38, 0.15); color: #f87171; border: 1px solid rgba(220, 38, 38, 0.3); border-radius: 6px; font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer;">
-                                    <i class="fa-solid fa-trash" style="font-size: 0.75rem;"></i> Delete
+                                <button id="tab-saved" onclick="switchProfileTab('saved')" style="background: none; border: none; color: #a6adc8; font-size: 1rem; font-weight: 600; padding: 8px 16px; cursor: pointer; transition: 0.2s; white-space: nowrap;">
+                                    Saved Items
                                 </button>
                             </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        });
-    }
-}
-
-
-    // 2. Render your dynamic listings cards with the sleek edit/delete design
-    myItemsGrid.innerHTML = "";
-    if (!myItems || myItems.length === 0) {
-        myItemsGrid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #888; padding: 20px;">You haven't listed any items for sale yet.</p>`;
-    } else {
-        myItems.forEach(item => {
-            myItemsGrid.innerHTML += `
-                <div class="card" id="item-card-${item.id}" style="background: #1e1e2e; border: 1px solid #2e303f; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                    <img src="${item.image_url || ''}" alt="${item.title}" style="width: 100%; height: 140px; object-fit: cover;">
-                    <div style="padding: 12px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; gap: 10px;">
-                        <div>
-                            <h3 style="margin: 0 0 4px 0; font-size: 1rem; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.title || 'Untitled'}</h3>
-                            <p style="margin: 0; font-size: 0.95rem; color: #a6adc8; font-weight: bold;">K${item.price || '0'}</p>
-                        </div>
-                        
-                        <div style="display: flex; flex-direction: column; gap: 8px;">
-                            <button onclick="openItem('${item.id}')" style="width: 100%; padding: 8px; background: #313244; color: #cdd6f4; border: 1px solid #45475a; border-radius: 6px; font-size: 0.85rem; font-weight: 600; cursor: pointer;">
-                                View Listing
-                            </button>
-                            <div style="display: flex; gap: 8px; width: 100%;">
-                                <button onclick="openEditModal('${item.id}', '${item.title.replace(/'/g, "\\'")}', ${item.price}, '${item.image_url || ''}')" style="flex: 1; padding: 8px; background: rgba(79, 70, 229, 0.15); color: #818cf8; border: 1px solid rgba(79, 70, 229, 0.3); border-radius: 6px; font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer;">
-                                    <i class="fa-solid fa-pen" style="font-size: 0.75rem;"></i> Edit
-                                </button>
-                                <button onclick="deleteItem('${item.id}')" style="flex: 1; padding: 8px; background: rgba(220, 38, 38, 0.15); color: #f87171; border: 1px solid rgba(220, 38, 38, 0.3); border-radius: 6px; font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer;">
-                                    <i class="fa-solid fa-trash" style="font-size: 0.75rem;"></i> Delete
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        });
-    }
-}
-
-// ==========================================
-// 2. FETCH & RENDER SAVED ITEMS
-// ==========================================
-async function fetchSavedItems() {
-    const savedGrid = document.getElementById("savedGrid");
-    if (!savedGrid) return;
-
-    try {
-        const { data: sessionData, error: sessionErr } = await client.auth.getSession();
-        const user = sessionData.session?.user || null;
-
-        if (sessionErr || !user) {
-            savedGrid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #888; padding: 20px;">Please log in to view your saved items.</p>`;
-            return;
-        }
-
-        // A. Fetch favorite item IDs for this user from the favorites table
-        const { data: favData, error: favError } = await client
-            .from("favorites")
-            .select("item_id")
-            .eq("user_id", user.id);
-
-        if (favError) throw favError;
-
-        if (!favData || favData.length === 0) {
-            savedGrid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #888; padding: 20px;">You haven't saved any items yet. 🤍</p>`;
-            return;
-        }
-
-        // Extract the item IDs into a clean array
-        const itemIds = favData.map(fav => fav.item_id);
-
-        // B. Query the items table for all matching saved items
-        const { data: savedItems, error: itemsError } = await client
-            .from("items")
-            .select("*")
-            .in("id", itemIds);
-
-        if (itemsError) throw itemsError;
-
-        // C. Render the Saved Cards
-        savedGrid.innerHTML = "";
-        if (!savedItems || savedItems.length === 0) {
-            savedGrid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #888; padding: 20px;">The items you saved are no longer available.</p>`;
-        } else {
-            savedItems.forEach(item => {
-                savedGrid.innerHTML += `
-                    <div class="card" id="saved-card-${item.id}" style="background: #1e1e2e; border: 1px solid #2e303f; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                        <img src="${item.image_url || ''}" alt="${item.title}" style="width: 100%; height: 140px; object-fit: cover;">
-                        <div style="padding: 12px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; gap: 10px;">
-                            <div>
-                                <h3 style="margin: 0 0 4px 0; font-size: 1rem; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.title || 'Untitled'}</h3>
-                                <p style="margin: 0; font-size: 0.95rem; color: #a6adc8; font-weight: bold;">K${item.price || '0'}</p>
-                            </div>
-                            
-                            <div style="display: flex; flex-direction: column; gap: 8px;">
-                                <button onclick="openItem('${item.id}')" style="width: 100%; padding: 8px; background: #313244; color: #cdd6f4; border: 1px solid #45475a; border-radius: 6px; font-size: 0.85rem; font-weight: 600; cursor: pointer;">
-                                    View Listing
-                                </button>
-                                <button onclick="unsaveItem('${item.id}')" style="width: 100%; padding: 8px; background: rgba(220, 38, 38, 0.15); color: #f87171; border: 1px solid rgba(220, 38, 38, 0.3); border-radius: 6px; font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer;">
-                                    <i class="fa-solid fa-heart-broken"></i> Unsave
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-        }
-    } catch (err) {
-        console.error("Error fetching saved items:", err);
-        savedGrid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #e78284; padding: 20px;">Failed to load saved items.</p>`;
-    }
-}
-
-// Automatically trigger the fetch when the page runs!
-fetchSavedItems();
-
-    // ==========================================
-// PROFILE TAB TOGGLE SYSTEM (LISTINGS, SAVED, CHATS)
-// ==========================================
-window.switchProfileTab = function(tabName) {
-    const tabListings = document.getElementById('tab-listings');
-    const tabSaved = document.getElementById('tab-saved');
-    const tabChats = document.getElementById('tab-chats');
-    
-    const gridListings = document.getElementById('myItemsGrid');
-    const gridSaved = document.getElementById('savedGrid');
-    const containerChats = document.getElementById('chatsContainer') || document.getElementById('inAppChatContainer'); // Handles whichever chat container id you have!
-
-    // Reset styles helper
-    const resetTab = (tab) => {
-        if (tab) {
-            tab.style.color = '#a6adc8';
-            tab.style.borderBottom = 'none';
-        }
-    };
-
-    // Apply Active Tab Style helper
-    const activeTab = (tab) => {
-        if (tab) {
-            tab.style.color = '#fff';
-            tab.style.borderBottom = '2px solid #4f46e5';
-        }
-    };
-
-    // Hide everything first
-    if (gridListings) gridListings.style.display = 'none';
-    if (gridSaved) gridSaved.style.display = 'none';
-    if (containerChats) containerChats.style.display = 'none';
-    
-    resetTab(tabListings);
-    resetTab(tabSaved);
-    resetTab(tabChats);
-
-    // Show the selected one
-    if (tabName === 'listings') {
-        activeTab(tabListings);
-        if (gridListings) gridListings.style.display = 'grid';
-    } else if (tabName === 'saved') {
-        activeTab(tabSaved);
-        if (gridSaved) gridSaved.style.display = 'grid';
-    } else if (tabName === 'chats') {
-        activeTab(tabChats);
-        if (containerChats) containerChats.style.display = 'block';
-    }
-};
-
-
-
-
-        
-
-                // 2. FETCH SAVED ITEMS 
-                if (savedGrid) {
-                    const { data: favData, error: favError } = await client
-                        .from("favorites")
-                        .select("item_id")
-                        .eq("user_id", user.id);
-
-                    if (favError) throw favError;
-
-                    if (!favData || favData.length === 0) {
-                        savedGrid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #888;">You haven't saved any items yet. 🤍</p>`;
-                        return;
+                        `;
+                        myItemsGrid.parentElement.insertBefore(
+                            document.createRange().createContextualFragment(tabsHTML), 
+                            myItemsGrid
+                        );
                     }
 
-                    const itemIds = favData.map(fav => fav.item_id);
-
-                    const { data: savedItems, error: savedItemsError } = await client
-                        .from("items")
-                        .select("*")
-                        .in("id", itemIds);
-
-                    if (savedItemsError) throw savedItemsError;
-
-                    savedGrid.innerHTML = "";
-                    if (!savedItems || savedItems.length === 0) {
-                        savedGrid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #888;">Saved items are no longer available.</p>`;
+                    // Render dynamic listings cards
+                    myItemsGrid.innerHTML = "";
+                    if (!myItems || myItems.length === 0) {
+                        myItemsGrid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #888; padding: 20px;">You haven't listed any items for sale yet.</p>`;
                     } else {
-                        for (const item of savedItems) {
-                            savedGrid.innerHTML += `
-                                <div class="card">
-                                    <img src="${item.image_url || ''}" alt="${item.title}">
-                                    <h3>${item.title || 'Untitled'}</h3>
-                                    <p>K${item.price || '0'}</p>
-                                    <div class="card-buttons">
-                                        <button onclick="openItem('${item.id}')">View</button>
-                                        <button class="favorite-btn" onclick="toggleFavorite('${item.id}')">
-                                            ❤️ Saved
-                                        </button>
+                        myItems.forEach(item => {
+                            myItemsGrid.innerHTML += `
+                                <div class="card" id="item-card-${item.id}" style="background: #1e1e2e; border: 1px solid #2e303f; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                                    <img src="${item.image_url || ''}" alt="${item.title}" style="width: 100%; height: 140px; object-fit: cover;">
+                                    <div style="padding: 12px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; gap: 10px;">
+                                        <div>
+                                            <h3 style="margin: 0 0 4px 0; font-size: 1rem; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.title || 'Untitled'}</h3>
+                                            <p style="margin: 0; font-size: 0.95rem; color: #a6adc8; font-weight: bold;">K${item.price || '0'}</p>
+                                        </div>
+                                        
+                                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                                            <button onclick="openItem('${item.id}')" style="width: 100%; padding: 8px; background: #313244; color: #cdd6f4; border: 1px solid #45475a; border-radius: 6px; font-size: 0.85rem; font-weight: 600; cursor: pointer;">
+                                                View Listing
+                                            </button>
+                                            <div style="display: flex; gap: 8px; width: 100%;">
+                                                <button onclick="openEditModal('${item.id}', '${item.title.replace(/'/g, "\\\\'")}', ${item.price}, '${item.image_url || ''}')" style="flex: 1; padding: 8px; background: rgba(79, 70, 229, 0.15); color: #818cf8; border: 1px solid rgba(79, 70, 229, 0.3); border-radius: 6px; font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer;">
+                                                    <i class="fa-solid fa-pen" style="font-size: 0.75rem;"></i> Edit
+                                                </button>
+                                                <button onclick="deleteItem('${item.id}')" style="flex: 1; padding: 8px; background: rgba(220, 38, 38, 0.15); color: #f87171; border: 1px solid rgba(220, 38, 38, 0.3); border-radius: 6px; font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer;">
+                                                    <i class="fa-solid fa-trash" style="font-size: 0.75rem;"></i> Delete
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             `;
-                        }
+                        });
                     }
+                }
+
+                // 2. FETCH SAVED ITEMS 
+                if (savedGrid) {
+                    await fetchSavedItems();
                 }
 
             } catch (err) {
@@ -1035,13 +822,11 @@ window.switchProfileTab = function(tabName) {
 // ==========================
 window.startInAppChat = async function(itemId) {
     try {
-        // Safe check: get the Supabase client
         if (!client) {
             alert("Database is connecting, please try again in a moment.");
             return;
         }
 
-        // Get the current logged-in user safely from the active session
         const { data, error } = await client.auth.getSession();
         const user = data.session?.user || null;
 
@@ -1051,7 +836,6 @@ window.startInAppChat = async function(itemId) {
             return;
         }
 
-        // Fetch the seller's user_id from the item details
         const { data: item, error: itemErr } = await client
             .from("items")
             .select("user_id")
@@ -1063,13 +847,11 @@ window.startInAppChat = async function(itemId) {
             return;
         }
 
-        // Prevent self-chatting
         if (item.user_id === user.id) {
             alert("You cannot start a chat on your own listing!");
             return;
         }
 
-        // Check if a chat room already exists
         let { data: room, error: roomErr } = await client
             .from("chat_rooms")
             .select("id")
@@ -1080,7 +862,6 @@ window.startInAppChat = async function(itemId) {
         if (roomErr) throw roomErr;
 
         if (!room) {
-            // Create a new room if none exists
             const { data: newRoom, error: createErr } = await client
                 .from("chat_rooms")
                 .insert({
@@ -1095,105 +876,13 @@ window.startInAppChat = async function(itemId) {
             room = newRoom;
         }
 
-        // Redirect safely to the chat room
         window.location.href = `messages.html?room=${room.id}`;
     } catch (err) {
         console.error("Error starting chat session:", err);
         alert("Failed to initialize chat. Please check the developer console.");
     }
 };
-// ==========================================
-// ITEM MANAGEMENT (EDIT & DELETE FUNCTIONS)
-// ==========================================
 
-// 1. DELETE LISTING FUNCTION
-window.deleteItem = async function(itemId) {
-    const confirmDelete = confirm("Are you sure you want to delete this listing? This action cannot be undone.");
-    if (!confirmDelete) return;
-
-    try {
-        // Safe check: make sure user is logged in
-        const { data, error: sessionErr } = await client.auth.getSession();
-        const user = data.session?.user || null;
-
-        if (sessionErr || !user) {
-            alert("Your session has expired. Please log in again.");
-            window.location.href = "login.html";
-            return;
-        }
-
-        // Delete from database (Cascade will handle removing favorites and chat rooms automatically!)
-        const { error } = await client
-            .from("items")
-            .delete()
-            .eq("id", itemId)
-            .eq("user_id", user.id); // Guard against spoofing
-
-        if (error) throw error;
-
-        // Visual feedback: remove card immediately from UI
-        const card = document.getElementById(`item-card-${itemId}`);
-        if (card) {
-            card.remove();
-        }
-
-        // Keep counts in sync
-        const countBadge = document.getElementById("listingsCount");
-        if (countBadge) {
-            const currentCount = parseInt(countBadge.innerText) || 0;
-            countBadge.innerText = Math.max(0, currentCount - 1);
-        }
-
-        alert("🗑️ Listing deleted successfully.");
-    } catch (err) {
-        console.error("Delete failed:", err);
-        alert("Failed to delete listing. Make sure you are the owner of this item.");
-    }
-};
-
-// 2. QUICK EDIT TITLE/PRICE FUNCTION
-window.editItemPrompt = async function(itemId, currentTitle, currentPrice) {
-    const newTitle = prompt("Update Item Title:", currentTitle);
-    if (newTitle === null) return; // User cancelled
-    
-    const newPriceStr = prompt("Update Item Price (K):", currentPrice);
-    if (newPriceStr === null) return; // User cancelled
-
-    const newPrice = parseFloat(newPriceStr);
-    if (isNaN(newPrice) || newPrice <= 0) {
-        alert("Please enter a valid price.");
-        return;
-    }
-
-    try {
-        const { data, error: sessionErr } = await client.auth.getSession();
-        const user = data.session?.user || null;
-
-        if (sessionErr || !user) {
-            alert("Session expired. Please log in.");
-            window.location.href = "login.html";
-            return;
-        }
-
-        const { error } = await client
-            .from("items")
-            .update({
-                title: newTitle.trim(),
-                price: newPrice
-            })
-            .eq("id", itemId)
-            .eq("user_id", user.id);
-
-        if (error) throw error;
-
-        alert("✨ Listing updated successfully!");
-        location.reload(); // Refresh to display updated details immediately
-
-    } catch (err) {
-        console.error("Update failed:", err);
-        alert("Failed to update listing.");
-    }
-};
 // ==========================================
 // ITEM MANAGEMENT (EDIT & DELETE FUNCTIONS)
 // ==========================================
@@ -1213,7 +902,6 @@ window.deleteItem = async function(itemId) {
             return;
         }
 
-        // Delete from database
         const { error } = await client
             .from("items")
             .delete()
@@ -1222,11 +910,9 @@ window.deleteItem = async function(itemId) {
 
         if (error) throw error;
 
-        // Remove card from UI immediately
         const card = document.getElementById(`item-card-${itemId}`);
         if (card) card.remove();
 
-        // Keep count in sync
         const countBadge = document.getElementById("listingsCount");
         if (countBadge) {
             const currentCount = parseInt(countBadge.innerText) || 0;
@@ -1283,6 +969,7 @@ window.editItemPrompt = async function(itemId, currentTitle, currentPrice) {
         alert("Failed to update listing.");
     }
 };
+
 // ==========================================
 // PROFESSIONAL EDIT MODAL SYSTEM
 // ==========================================
@@ -1323,7 +1010,6 @@ const modalHTML = `
 </div>
 `;
 
-// Inject it into body when script loads
 document.body.insertAdjacentHTML('beforeend', modalHTML);
 
 // 2. Open Modal & Populate fields
@@ -1340,10 +1026,7 @@ window.openEditModal = function(itemId, title, price, imageUrl) {
         imgPreview.style.display = 'none';
     }
     
-    // Clear any previous file selection
     document.getElementById('editImageFile').value = "";
-    
-    // Show Modal
     document.getElementById('editModal').style.display = 'flex';
 };
 
@@ -1379,19 +1062,16 @@ document.getElementById('editForm').addEventListener('submit', async function(e)
 
         let imageUrl = document.getElementById('editImagePreview').src;
 
-        // If a new image file was selected on your phone, upload it first!
         if (file) {
             const fileExt = file.name.split('.').pop();
             const fileName = `${user.id}/${Date.now()}.${fileExt}`;
             
-            // Replace 'item-images' with your actual Supabase storage bucket name!
             const { data: uploadData, error: uploadErr } = await client.storage
                 .from('item-images') 
                 .upload(fileName, file, { upsert: true });
 
             if (uploadErr) throw uploadErr;
 
-            // Get the public URL for the newly uploaded photo
             const { data: urlData } = client.storage
                 .from('item-images')
                 .getPublicUrl(fileName);
@@ -1399,7 +1079,6 @@ document.getElementById('editForm').addEventListener('submit', async function(e)
             imageUrl = urlData.publicUrl;
         }
 
-        // Update the item in your Supabase table
         const { error: updateErr } = await client
             .from('items')
             .update({
@@ -1414,7 +1093,7 @@ document.getElementById('editForm').addEventListener('submit', async function(e)
 
         alert("✨ Listing updated successfully!");
         closeEditModal();
-        location.reload(); // Refresh to show the new title, price, and image!
+        location.reload(); 
 
     } catch (err) {
         console.error("Update failed:", err);
@@ -1446,7 +1125,6 @@ window.switchProfileTab = async function(tabName) {
         }
     };
 
-    // 1. INSTANTLY switch visual tabs & hide/show the grids (Unblocks the browser!)
     resetTab(tabListings);
     resetTab(tabSaved);
 
@@ -1461,19 +1139,16 @@ window.switchProfileTab = async function(tabName) {
         if (sectionSaved) sectionSaved.style.display = 'block';
     }
 
-    // 2. YIELD to the browser thread so it paints the active state instantly
     await new Promise(resolve => setTimeout(resolve, 0));
 
-    // 3. Run the database fetches in the background
     if (tabName === 'listings') {
-        // Run your listings fetch function if you have one
+        // Handled dynamically during page load initialization
     } else if (tabName === 'saved') {
         if (typeof fetchSavedItems === 'function') {
             fetchSavedItems();
         }
     }
 };
-
 
 // ==========================================
 // 2. DIAGNOSTIC FETCH & RENDER SAVED ITEMS
@@ -1491,14 +1166,12 @@ async function fetchSavedItems() {
             return;
         }
 
-        // --- Change "favorites" to your actual table name if different ---
         const { data: favData, error: favError } = await client
             .from("favorites") 
             .select("item_id")
             .eq("user_id", user.id);
 
         if (favError) {
-            // This will print the exact Supabase error on your screen!
             savedGrid.innerHTML = `
                 <div style="grid-column: 1/-1; text-align: center; color: #f87171; padding: 20px;">
                     <p><strong>Database Error:</strong> ${favError.message}</p>
@@ -1540,7 +1213,7 @@ async function fetchSavedItems() {
                                 <button onclick="openItem('${item.id}')" style="width: 100%; padding: 8px; background: #313244; color: #cdd6f4; border: 1px solid #45475a; border-radius: 6px; font-size: 0.85rem; font-weight: 600; cursor: pointer;">
                                     View Listing
                                 </button>
-                                <button onclick="unsaveItem('${item.id}')" style="width: 100%; padding: 8px; background: rgba(220, 38, 38, 0.15); color: #f87171; border: 1px solid rgba(220, 38, 38, 0.3); border-radius: 6px; font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer;">
+                                <button onclick="toggleFavorite('${item.id}')" style="width: 100%; padding: 8px; background: rgba(220, 38, 38, 0.15); color: #f87171; border: 1px solid rgba(220, 38, 38, 0.3); border-radius: 6px; font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer;">
                                     <i class="fa-solid fa-heart-broken"></i> Unsave
                                 </button>
                             </div>
@@ -1554,6 +1227,3 @@ async function fetchSavedItems() {
         savedGrid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #e78284; padding: 20px;">An unexpected error occurred.</p>`;
     }
 }
-
-// Call it
-fetchSavedItems();
