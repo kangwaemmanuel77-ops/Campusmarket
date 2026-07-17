@@ -55,29 +55,34 @@ async function getUserSafe() {
 }
 
 // ==========================================
-// START APP (RECONSTRUCTED ROUTER)
+// START APP (CORRECTED ROUTER)
 // ==========================================
 async function startApp() {
     const page = getPage();
     console.log("Current page loaded:", page);
 
-    // 🔴 1. Start your global notification listener
+    // 🔴 Start your global notification listener
     startGlobalNotificationListener();
 
-    // 🔴 2. Route to the correct page-specific function
     try {
         if (page === "index.html" || page === "") {
+            // Check if you use loadItems, fetchItems, or renderItems
             if (typeof loadItems === "function") await loadItems();
+            else if (typeof fetchItems === "function") await fetchItems();
         } 
         else if (page === "marketplace.html") {
             if (typeof loadItems === "function") await loadItems();
+            else if (typeof fetchItems === "function") await fetchItems();
+            
             if (typeof setupFilters === "function") setupFilters();
         } 
         else if (page === "profile.html") {
-            if (typeof loadProfile === "function") await loadProfile();
+            // 🔴 Corrected to match line 100 in your file!
+            if (typeof loadProfileData === "function") await loadProfileData();
         } 
         else if (page === "messages.html") {
             if (typeof initChatSystem === "function") await initChatSystem();
+            else if (typeof initChat === "function") await initChat();
         } 
         else if (page === "sell.html") {
             if (typeof setupSellForm === "function") setupSellForm();
@@ -86,8 +91,6 @@ async function startApp() {
         console.error("Error loading page features:", error);
     }
 }
-
-
 
 
     // ==========================
