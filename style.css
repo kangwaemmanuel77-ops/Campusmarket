@@ -1191,3 +1191,19 @@ footer {
         padding: 10px;
     }
        }
+/* Navigation Chat Badge (Red Notification Dot) */
+.nav-chat-link {
+    position: relative; /* Allows the badge to sit perfectly on top */
+}
+
+.chat-badge {
+    position: absolute;
+    top: 2px;
+    right: -4px;
+    width: 8px;
+    height: 8px;
+    background-color: #ef4444; /* Clean crimson red */
+    border-radius: 50%;
+    border: 1.5px solid #11111b; /* Matches your navbar bg so it stands out */
+    box-shadow: 0 0 8px rgba(239, 68, 68, 0.6); /* Glow effect */
+}
