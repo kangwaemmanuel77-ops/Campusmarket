@@ -48,24 +48,32 @@ async function getUserSafe() {
     return data.session?.user || null;
 }
 
-// ==========================
+// ==========================================
 // START APP
-// ==========================
+// ==========================================
 function startApp() {
-    function initSupabase() {
+    const page = getPage();
+    // Your existing startApp code continues below...
+}
+
+// ==========================================
+// INIT SUPABASE SAFELY
+// ==========================================
+function initSupabase() {
     if (window.supabase && window.supabase.createClient) {
         client = window.supabase.createClient(supabaseUrl, supabaseKey);
         console.log("✅ Supabase Ready");
-        startApp();
         
-        // 🔴 ADD THIS LINE HERE:
+        startApp();
         startGlobalNotificationListener();
     } else {
         setTimeout(initSupabase, 50);
     }
 }
 
-    const page = getPage();
+// Start the initialization sequence
+initSupabase();
+
 
     // ==========================
     // PROFILE PAGE PROCESSING
