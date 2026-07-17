@@ -49,30 +49,39 @@ async function getUserSafe() {
 }
 
 // ==========================================
-// START APP
+// START APP (RECONSTRUCTED ROUTER)
 // ==========================================
-function startApp() {
+async function startApp() {
     const page = getPage();
-    // Your existing startApp code continues below...
-}
+    console.log("Current page loaded:", page);
 
-// ==========================================
-// INIT SUPABASE SAFELY
-// ==========================================
-function initSupabase() {
-    if (window.supabase && window.supabase.createClient) {
-        client = window.supabase.createClient(supabaseUrl, supabaseKey);
-        console.log("✅ Supabase Ready");
-        
-        startApp();
-        startGlobalNotificationListener();
-    } else {
-        setTimeout(initSupabase, 50);
+    // 🔴 1. Start your global notification listener
+    startGlobalNotificationListener();
+
+    // 🔴 2. Route to the correct page-specific function
+    try {
+        if (page === "index.html" || page === "") {
+            if (typeof loadItems === "function") await loadItems();
+        } 
+        else if (page === "marketplace.html") {
+            if (typeof loadItems === "function") await loadItems();
+            if (typeof setupFilters === "function") setupFilters();
+        } 
+        else if (page === "profile.html") {
+            if (typeof loadProfile === "function") await loadProfile();
+        } 
+        else if (page === "messages.html") {
+            if (typeof initChatSystem === "function") await initChatSystem();
+        } 
+        else if (page === "sell.html") {
+            if (typeof setupSellForm === "function") setupSellForm();
+        }
+    } catch (error) {
+        console.error("Error loading page features:", error);
     }
 }
 
-// Start the initialization sequence
-initSupabase();
+
 
 
     // ==========================
