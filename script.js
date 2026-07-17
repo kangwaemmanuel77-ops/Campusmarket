@@ -1,3 +1,9 @@
+// 🚨 MOBILE DEBUGGER - Let's catch the exact error
+window.onerror = function (message, url, lineNo) {
+    alert("JS Error: " + message + "\nLine: " + lineNo);
+    return false;
+};
+
 // Helper to yield control back to the browser for instant UI painting
 const yieldToMain = () => {
     if ('scheduler' in window && 'yield' in scheduler) {
