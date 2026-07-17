@@ -52,6 +52,19 @@ async function getUserSafe() {
 // START APP
 // ==========================
 function startApp() {
+    function initSupabase() {
+    if (window.supabase && window.supabase.createClient) {
+        client = window.supabase.createClient(supabaseUrl, supabaseKey);
+        console.log("✅ Supabase Ready");
+        startApp();
+        
+        // 🔴 ADD THIS LINE HERE:
+        startGlobalNotificationListener();
+    } else {
+        setTimeout(initSupabase, 50);
+    }
+}
+
     const page = getPage();
 
     // ==========================
@@ -1225,5 +1238,61 @@ async function fetchSavedItems() {
     } catch (err) {
         console.error("Error fetching saved items:", err);
         savedGrid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #e78284; padding: 20px;">An unexpected error occurred.</p>`;
+    }
+}
+// ==========================================
+// REAL-TIME NEW MESSAGE ALERTS
+// ==========================================
+async function startGlobalNotificationListener() {
+    // 1. Ensure client is ready and user is logged in
+    if (!client) return;
+    
+    try {
+        const { data: { user } } = await client.auth.getUser();
+        if (!user) return; // User isn't logged in
+
+        const chatBadge = document.getElementById("chatBadge");
+        if (!chatBadge) return; // Not on a page with the nav bar badge
+
+        // 2. Clear badge automatically if we are currently on the messages page
+        if (window.location.pathname.includes("messages.html")) {
+            chatBadge.style.display = "none";
+        }
+
+        // 3. Listen for any new messages sent in the database
+        client
+            .channel('global-message-alerts')
+            .on(
+                'postgres_changes',
+                { event: 'INSERT', schema: 'public', table: 'messages' },
+                (payload) => {
+                    const newMessage = payload.new;
+
+                    // 4. If the message is from someone else, light up the red dot!
+                    if (newMessage.sender_id !== user.id) {
+                        // Only show the badge if we aren't already viewing this chat room
+                        const isCurrentlyOnChatPage = window.location.pathname.includes("messages.html");
+                        
+                        if (isCurrentlyOnChatPage && typeof activeRoomId !== 'undefined' && activeRoomId === newMessage.room_id) {
+                            return; 
+                        }
+
+                        // Show the notification dot
+                        chatBadge.style.display = "block";
+
+                        // Play a soft notification ping!
+                        try {
+                            const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-84.wav');
+                            audio.volume = 0.3;
+                            audio.play();
+                        } catch (e) {
+                            // Browser blocked autoplay; fails silently
+                        }
+                    }
+                }
+            )
+            .subscribe();
+    } catch (err) {
+        console.error("Notification listener error:", err);
     }
 }
