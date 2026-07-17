@@ -1431,7 +1431,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // ==========================================
-// 2. FETCH & RENDER SAVED ITEMS
+// 2. DIAGNOSTIC FETCH & RENDER SAVED ITEMS
 // ==========================================
 async function fetchSavedItems() {
     const savedGrid = document.getElementById("savedGrid");
@@ -1446,23 +1446,30 @@ async function fetchSavedItems() {
             return;
         }
 
-        // A. Fetch favorite item IDs for this user from the favorites table
+        // --- Change "favorites" to your actual table name if different ---
         const { data: favData, error: favError } = await client
-            .from("favorites")
+            .from("favorites") 
             .select("item_id")
             .eq("user_id", user.id);
 
-        if (favError) throw favError;
+        if (favError) {
+            // This will print the exact Supabase error on your screen!
+            savedGrid.innerHTML = `
+                <div style="grid-column: 1/-1; text-align: center; color: #f87171; padding: 20px;">
+                    <p><strong>Database Error:</strong> ${favError.message}</p>
+                    <p style="font-size: 0.8rem; color: #a6adc8;">Hint: Double-check if your Supabase table is named "favorites" or something else.</p>
+                </div>
+            `;
+            return;
+        }
 
         if (!favData || favData.length === 0) {
             savedGrid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #888; padding: 20px;">You haven't saved any items yet. 🤍</p>`;
             return;
         }
 
-        // Extract the item IDs into a clean array
         const itemIds = favData.map(fav => fav.item_id);
 
-        // B. Query the items table for all matching saved items
         const { data: savedItems, error: itemsError } = await client
             .from("items")
             .select("*")
@@ -1470,7 +1477,6 @@ async function fetchSavedItems() {
 
         if (itemsError) throw itemsError;
 
-        // C. Render the Saved Cards
         savedGrid.innerHTML = "";
         if (!savedItems || savedItems.length === 0) {
             savedGrid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #888; padding: 20px;">The items you saved are no longer available.</p>`;
@@ -1500,9 +1506,9 @@ async function fetchSavedItems() {
         }
     } catch (err) {
         console.error("Error fetching saved items:", err);
-        savedGrid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #e78284; padding: 20px;">Failed to load saved items.</p>`;
+        savedGrid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #e78284; padding: 20px;">An unexpected error occurred.</p>`;
     }
 }
 
-// Automatically trigger the fetch when the page runs!
+// Call it
 fetchSavedItems();
