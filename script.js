@@ -172,7 +172,7 @@ if (myItemsGrid) {
         myItems.forEach(item => {
             myItemsGrid.innerHTML += `
                 <div class="card" id="item-card-${item.id}" style="background: #1e1e2e; border: 1px solid #2e303f; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                    <img src="${item.image_url \vert{}\vert{} ''}" alt="${item.title}" style="width: 100%; height: 140px; object-fit: cover;">
+                    <img src="${item.image_url || ''}" alt="${item.title}" style="width: 100%; height: 140px; object-fit: cover;">
                     <div style="padding: 12px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; gap: 10px;">
                         <div>
                             <h3 style="margin: 0 0 4px 0; font-size: 1rem; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.title || 'Untitled'}</h3>
@@ -198,7 +198,6 @@ if (myItemsGrid) {
         });
     }
 }
-
 
 
     // 2. Render your dynamic listings cards with the sleek edit/delete design
